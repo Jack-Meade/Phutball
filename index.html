@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="styles.css" />
+    <script src="./phutball.js"></script>
+    <title>Phutball</title>
+  </head>
+
+  <body>
+    <!-- <canvas width="150" height="250"></canvas><br> -->
+    <canvas width="100" height="100"></canvas>
+    <section>
+      <input type="radio" name="rad_ai" id="random" value="random" checked />
+      <label for="random">Random</label>
+      <input type="radio" name="rad_ai" id="minimax" value="minimax" />
+      <label for="minimax">Minimax</label>
+      <input type="radio" name="rad_ai" id="rlearning" value="rlearning" />
+      <label for="rlearning">Rlearning</label>
+    </section>
+    <section>
+      <button type="button" id="but_player">Player</button>
+      <button type="button" id="but_kick">Kick</button>
+      <button type="button" id="but_ai">Run</button>
+      <input  type="number" id="input_num_turns" value="100" />
+    </section>
+    <section>
+      <span id="status"></span>
+      <span id="error_msg"></span>
+    </section>
+    <section>
+      <h3 id="player1_score"></h3>
+      <h3 id="player2_score"></h3>
+    </section>
+  </body>
+</html>
