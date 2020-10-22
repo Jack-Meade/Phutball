@@ -7,19 +7,15 @@ class Player(ABC):
         pass
 
     @staticmethod
-    def get_successes(board, ball_coords):
-        steps = [
-            { "x" : -1, "y" : -1 },
-            { "x" : -1, "y" :  0 },
-            { "x" : -1, "y" :  1 },
-            { "x" :  0, "y" : -1 },
-            { "x" :  0, "y" :  1 },
-            { "x" :  1, "y" : -1 },
-            { "x" :  1, "y" :  0 },
-            { "x" :  1, "y" :  1 }
-        ]
-        boards = []
+    def get_successes(board, ball):
+        boards = Player.place_players(board, ball)
+        boards += Player.kick_ball(board, ball)
+        
+        return boards
 
+    @staticmethod
+    def place_players(board, ball):
+        boards = []
         # for every cell, place player where applicable (not on player|ball) on a new_board
         for y in range(1, len(board)-1):
             for x in range(1, len(board[y])-1):
@@ -29,14 +25,29 @@ class Player(ABC):
                     new_board[y][x] = 2
                     boards.append({
                         "board" : new_board,
-                        "ball"  : ball_coords,
+                        "ball"  : ball,
                     })
+        return boards
+
+    @staticmethod
+    def kick_ball(board, ball):
+        steps = [
+            { "x" : -1, "y" : -1 },
+            { "x" :  0, "y" : -1 },
+            { "x" :  1, "y" : -1 },
+            { "x" : -1, "y" :  0 },
+            { "x" :  1, "y" :  0 },
+            { "x" : -1, "y" :  1 },
+            { "x" :  0, "y" :  1 },
+            { "x" :  1, "y" :  1 }
+        ]
+        boards = []
 
         # for each cell next to ball, determine if you can kick in a line
         for step in steps:
             players = []
-            curX    = ball_coords["x"] + step["x"]
-            curY    = ball_coords["y"] + step["y"]
+            curX    = ball["x"] + step["x"]
+            curY    = ball["y"] + step["y"]
 
             # while there is a player along the line
             while board[curY][curX] == 2:
@@ -51,8 +62,8 @@ class Player(ABC):
             if len(players):
                 new_board = deepcopy(board)
                 Player.remove_players(new_board, players)
-                new_board[ball_coords["y"]][ball_coords["x"]] = 5
-                new_board[curY][curX]                         = 1
+                new_board[ball["y"]][ball["x"]] = 5
+                new_board[curY][curX]           = 1
                 boards.append({
                     "board" : new_board,
                     "ball"  : { "x" : curX, "y" : curY },
