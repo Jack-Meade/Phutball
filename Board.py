@@ -40,6 +40,11 @@ class Board(object):
     def __len__(self):
         return len(self._board)
 
+    def __eq__(self, other):
+        if type(other) == dict:
+            return self._board == other["board"]
+        return self._board == other
+
     def _get_board(self):
         return self._board
     def _get_ball(self):

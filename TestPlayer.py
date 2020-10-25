@@ -1,19 +1,13 @@
 from unittest             import TestCase, main
 from PlayerClasses.Player import Player
+from Board                import Board
 
 class TestPlayer(TestCase):
     def setUp(self):
         pass       
 
     def test_place_players(self):
-        test_board = [
-            [3,3,3,3,3],
-            [0,3,3,3,0],
-            [0,5,1,5,0],
-            [0,4,4,4,0],
-            [4,4,4,4,4]
-        ]
-        test_ball = { "x" : 2, "y" : 2 }
+        test_board = Board(False)
 
         expected_result = [
             {
@@ -98,17 +92,14 @@ class TestPlayer(TestCase):
             },
         ]
             
-        self.assertEqual(Player.place_players(test_board, test_ball), expected_result, "Player.place_players invalid")
+        self.assertEqual(Player.place_players(test_board), expected_result, "Player.place_players() invalid")
 
     def test_kick_ball(self):
-        test_board = [
-            [3,3,3,3,3],
-            [0,2,3,2,0],
-            [0,5,1,5,0],
-            [0,2,2,4,0],
-            [4,4,4,4,4]
-        ]
-        test_ball = { "x" : 2, "y" : 2 }
+        test_board = Board(False)
+        test_board.update(1, 1, "player")
+        test_board.update(3, 1, "player")
+        test_board.update(1, 3, "player")
+        test_board.update(2, 3, "player")
 
         expected_result = [
             {
@@ -153,17 +144,11 @@ class TestPlayer(TestCase):
             }
         ]
         
-        self.assertEqual(Player.kick_ball(test_board, test_ball), expected_result, "Player.kick_ball() Invalid")
+        self.assertEqual(Player.kick_ball(test_board), expected_result, "Player.kick_ball() Invalid")
 
     def test_get_successors(self):
-        test_board = [
-            [3,3,3,3,3],
-            [0,2,3,3,0],
-            [0,5,1,5,0],
-            [0,4,4,4,0],
-            [4,4,4,4,4]
-        ]
-        test_ball = { "x" : 2, "y" : 2 }
+        test_board = Board(False)
+        test_board.update(1, 1, "player")
 
         expected_result = [
             {
@@ -248,7 +233,7 @@ class TestPlayer(TestCase):
             }
         ]
 
-        self.assertEqual(Player.get_successes(test_board, test_ball), expected_result, "Player.get_successes() Invalid")
+        self.assertEqual(Player.get_successes(test_board), expected_result, "Player.get_successes() Invalid")
 
 if __name__ == '__main__':
     main()
