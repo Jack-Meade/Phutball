@@ -55,7 +55,6 @@ class Board(object):
 
         # if cell is one away from ball (no player in-between)
         if abs(newX - self._ball["x"]) == 1 or abs(newY - self._ball["y"]) == 1:
-            self._error_msg = "Missing player to kick ball there!"
             return False
 
         # Determine if cell is above/below and left/right of ball,
@@ -73,7 +72,6 @@ class Board(object):
         while curX != newX or curY != newY:
             # if there is no player along line to new cell
             if not self.is_player(curX, curY):
-                self._error_msg = "Missing player to kick ball there!"
                 return False
 
             players.append({ "x" : curX, "y" : curY })

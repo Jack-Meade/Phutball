@@ -89,6 +89,7 @@ class PhutballServer(TCPServer):
 
             else:
                 valid_turn = self._board.kick_ball(x, y)
+                if not valid_turn: self._error_msg = "Missing player to kick ball there!"
         ##################################################
         else:
             # if cell is wall or ball
@@ -100,7 +101,7 @@ class PhutballServer(TCPServer):
                 # if cell is not back part of goal
                 if y != 0 and y != len(self._board)-1:
                     self._board.update(x, y, "player")
-                    valid_turn        = True
+                    valid_turn = True
                 else:
                     self._error_msg = "You cannot put a player in goal!"
 
