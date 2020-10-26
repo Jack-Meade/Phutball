@@ -37,7 +37,7 @@ class PhutballHandler(SimpleHTTPRequestHandler):
 
 class PhutballServer(TCPServer):
     def __init__(self, addr, handler):
-        self._board      = Board(False)
+        self._board      = Board(True)
         self._p1_score   = 0
         self._p2_score   = 0
         self._p1_turn    = True
@@ -120,8 +120,12 @@ class PhutballServer(TCPServer):
 
     def run_ai(self, num_turns, ai_type):
         for _ in range(num_turns):
-            self._ai_turn(ai_type)
-            self._p1_turn = not self._p1_turn
+            game_over = self._ai_turn(ai_type)
+            if not game_over:
+                self._p1_turn = not self._p1_turn
+            else:
+                self._p1_turn = True
+                
 
     def _ai_turn(self, ai_type, p1=None):
         if p1 is None: p1 = self._p1_turn
@@ -129,10 +133,11 @@ class PhutballServer(TCPServer):
         player    = getattr(import_module("PlayerClasses."+ai_type), ai_type)
         new_board = player.take_turn(self._board, self._p1_turn)
 
-        if   new_board.ball["y"] <= 1:                  self._p2_score += 1; self._board.reset_board()
-        elif new_board.ball["y"] >= len(self._board)-2: self._p1_score += 1; self._board.reset_board()
+        if   new_board.ball["y"] <= 1:                  self._p2_score += 1; self._board.reset_board(); return True
+        elif new_board.ball["y"] >= len(self._board)-2: self._p1_score += 1; self._board.reset_board(); return True
         else:                                         
             self._board = new_board
+            return False
 
 
 def run_server(port, handler):
