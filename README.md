@@ -21,4 +21,4 @@ To further cut down on execution time, we will use [Alpha–beta pruning](https:
 ### Reinforcement Learning
 Through the use of [reinforcement learning](https://en.wikipedia.org/wiki/Reinforcement_learning), we will craft an AI which knows what moves are favourable and ones which are not. This is done by rewarding the AI when it wins a game and penalising it when it loses a game. 
 
-The idea is to train the AI to come up with it's own strategies instead of programming what it should do in a situation. We give it the capacity to recall situations which are similar to the one it currently faces and if it was rewarded or penalised on what actions it took before. Through trial-and-error, the AI will get a feel of what moves are good to play and which one should be avoided.
+The idea is to train the AI to come up with its own strategies instead of programming what it should do in a situation. We give it the capacity to recall situations which are similar to the one it currently faces and if it was rewarded or penalised on what actions it took before. Through trial-and-error, the AI will get a feel of what moves are good to play and which one should be avoided.
