@@ -1,6 +1,6 @@
 from PlayerClasses.Player import Player
 
-class PlayerRandom(Player):
+class PlayerRL(Player):
     @staticmethod
-    def take_turn(board, ball):
-        return board, ball
+    def take_turn(board, p1):
+        return board
