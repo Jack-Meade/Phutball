@@ -1,38 +1,49 @@
 from PlayerClasses.Player import Player
+from lib.Node             import Node
+
 
 class PlayerMinimax(Player):
     @staticmethod
-    def take_turn(board, p1):
-        return PlayerMinimax._minimax(board, 3, float('-inf'), float('inf'), p1)[1]
+    def take_turn(board, player1):
+        DEPTH = 3
+
+        root       = Node(board)
+        root       = PlayerMinimax._build_tree(root, DEPTH)
+        root.value = PlayerMinimax._minimax(root, DEPTH, float('-inf'), float('inf'), player1)
+        fav_child  = max(root.children) if player1 else min(root.children)
+    
+        return fav_child.board
 
     @staticmethod
-    def _minimax(board, depth, alpha, beta, player1):
-        return PlayerMinimax._build_tree(board, depth, alpha, beta, player1)
-
-    @staticmethod
-    def _build_tree(board, depth, alpha, beta, player1):
-        if depth == 0 or board.ball["y"] <= 1 or board.ball["y"] >= len(board.state[0])-1:
-            return PlayerMinimax._heuristic(board), board
-
-        if player1:
-            highest = float('-inf')
-            for move in Player.get_successes(board):
-                cur_move = PlayerMinimax._build_tree(move, depth-1, alpha, beta, False)
-                highest  = max(highest, cur_move[0])
-                alpha    = max(alpha,   cur_move[0])
-
-                if beta <= alpha: break
-            return highest, move
+    def _build_tree(node, depth):
+        if depth == 0 or node.is_terminal():
+            return node
 
         else:
-            lowest = float('inf')
-            for move in Player.get_successes(board):
-                cur_move = PlayerMinimax._build_tree(move, depth-1, alpha, beta, True)
-                lowest   = min(lowest, cur_move[0])
-                beta     = min(beta,   cur_move[0])
+            node.children = [Node(cboard) for cboard in Player.get_successes(node.board)]
 
-                if beta <= alpha: break
-            return lowest, move
+            for child in node.children:
+                child = PlayerMinimax._build_tree(child, depth-1)
+                
+            return node
+
+    @staticmethod
+    def _minimax(node, depth, alpha, beta, player1):
+        if depth == 0 or node.is_terminal():
+            return PlayerMinimax._heuristic(node.board)
+
+        else:
+            highlow = float('-inf') if player1 else float('inf')
+
+            for child in node.children:
+                child.value = PlayerMinimax._minimax(child, depth-1, alpha, beta, not player1)
+
+                if player1: highlow = max(highlow, child.value); alpha = max(alpha, child.value)
+                else:       highlow = min(highlow, child.value); beta  = min(beta,  child.value)
+
+                # if beta <= alpha: break
+
+            return highlow
 
     @staticmethod
     def _heuristic(board):
@@ -44,8 +55,8 @@ class PlayerMinimax(Player):
                     elif y > len(board)//2: score += 1
 
                 elif board.is_ball(x, y):
-                    if   y <= 1:            return -1000
-                    elif y >= len(board)-1: return  1000
+                    if   y <= 1:            score -= 10000
+                    elif y >= len(board)-1: score += 10000
                     else:
                         if   y < len(board)//2: score -= 10 * y
                         elif y > len(board)//2: score += 10 * y
