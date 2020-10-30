@@ -11,9 +11,13 @@
   function init() {
     canvas = document.querySelector("canvas");
     ctx    = canvas.getContext("2d");
-    send_request({ action : "init" })
-    draw_game(ctx);
     setup_listeners()
+
+    send_request({ action : "init" })
+    canvas.height = (board.length-1)*SPACING
+    canvas.width  = (board[0].length-1)*SPACING
+
+    draw_game(ctx);
   }
 
   function player_turn(x, y) {
