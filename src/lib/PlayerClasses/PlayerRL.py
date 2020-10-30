@@ -1,4 +1,4 @@
-from PlayerClasses.Player import Player
+from .Player import Player
 
 class PlayerRL(Player):
     @staticmethod

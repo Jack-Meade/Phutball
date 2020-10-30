@@ -1,5 +1,5 @@
-from PlayerClasses.Player import Player
-from lib.Node             import Node
+from .Player import Player
+from ..Node  import Node
 
 
 class PlayerMinimax(Player):

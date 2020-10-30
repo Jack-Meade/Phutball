@@ -1,6 +1,6 @@
 from unittest             import TestCase, main
-from PlayerClasses.Player import Player
-from Board                import Board
+from ..lib.PlayerClasses.Player import Player
+from ..lib.Board                import Board
 
 class TestPlayer(TestCase):
     def setUp(self):

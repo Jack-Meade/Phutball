@@ -1,12 +1,13 @@
-from http.server          import SimpleHTTPRequestHandler
-from socketserver         import TCPServer
-from json                 import loads, dumps
-    
-from random               import randint
-from copy                 import deepcopy
-from importlib            import import_module
-from PlayerClasses.Player import Player
-from Board                import Board
+from http.server              import SimpleHTTPRequestHandler
+from socketserver             import TCPServer
+from json                     import loads, dumps
+
+from random                   import randint
+from copy                     import deepcopy
+from importlib                import import_module
+
+from lib.PlayerClasses.Player import Player
+from lib.Board                import Board
 
 class PhutballHandler(SimpleHTTPRequestHandler):
     def do_POST(self):
@@ -130,7 +131,7 @@ class PhutballServer(TCPServer):
     def _ai_turn(self, ai_type, p1=None):
         if p1 is None: p1 = self._p1_turn
 
-        player    = getattr(import_module("PlayerClasses."+ai_type), ai_type)
+        player    = getattr(import_module("lib.PlayerClasses."+ai_type), ai_type)
         new_board = player.take_turn(self._board, self._p1_turn)
 
         if   new_board.ball["y"] <= 1:                  self._p2_score += 1; self._board.reset_board(); return True

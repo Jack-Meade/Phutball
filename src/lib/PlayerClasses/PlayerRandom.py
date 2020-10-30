@@ -1,5 +1,5 @@
-from random               import randint
-from PlayerClasses.Player import Player
+from random  import randint
+from .Player import Player
 
 class PlayerRandom(Player):
     @staticmethod

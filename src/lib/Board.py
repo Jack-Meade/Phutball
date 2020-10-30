@@ -1,6 +1,5 @@
-from enum                 import Enum
-from copy                 import deepcopy
-from PlayerClasses.Player import Player
+from enum                  import Enum
+from copy                  import deepcopy
 
 class Board(object):
     def __init__(self, big_board):
