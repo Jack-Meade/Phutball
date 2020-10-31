@@ -147,7 +147,7 @@ def run_server(port, handler):
         try:
             httpd          = PhutballServer(("", port), handler)
             server_running = True
-            print("Serving at http://localhost:{}".format(port))
+            print("Serving at http://localhost:{}/src/".format(port))
             httpd.start()
         except OSError:
             print("{} in use, trying next".format(port))
