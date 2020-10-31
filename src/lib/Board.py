@@ -42,7 +42,7 @@ class Board(object):
     def __eq__(self, other):
         if type(other) == dict:
             return self._board == other["board"]
-        return self._board == other
+        return self._board == other.state
 
     def _get_board(self):
         return self._board
