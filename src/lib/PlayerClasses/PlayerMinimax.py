@@ -30,7 +30,7 @@ class PlayerMinimax(Player):
     @staticmethod
     def _minimax(node, depth, alpha, beta, player1):
         if depth == 0 or node.is_terminal():
-            return PlayerMinimax._heuristic(node.board)
+            return node.value or PlayerMinimax._heuristic(node.board)
 
         else:
             highlow = float('-inf') if player1 else float('inf')
