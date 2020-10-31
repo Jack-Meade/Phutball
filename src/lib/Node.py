@@ -1,3 +1,4 @@
+from collections import Counter
 
 class Node(object):
     def __init__(self, board):
@@ -5,8 +6,14 @@ class Node(object):
         self._value    = None
         self._board    = board
 
+    def __hash__(self):
+        return hash((str(self._board.state), str(self._value), str(self._children)))
+
     def __eq__(self, other):
-        return self._board == other.board and self._children == other.children and self._value == other.value
+        b = self._board == other.board
+        v = self._value == other.value
+        c = set(self._children) - set(other.children)
+        return b and v and not c
 
     def __gt__(self, other):
         return self._value > other.value
