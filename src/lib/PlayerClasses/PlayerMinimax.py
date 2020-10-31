@@ -41,7 +41,7 @@ class PlayerMinimax(Player):
                 if player1: highlow = max(highlow, child.value); alpha = max(alpha, child.value)
                 else:       highlow = min(highlow, child.value); beta  = min(beta,  child.value)
 
-                # if beta <= alpha: break
+                if beta <= alpha: break
 
             return highlow
 
