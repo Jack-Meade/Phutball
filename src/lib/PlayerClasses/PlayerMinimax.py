@@ -56,7 +56,7 @@ class PlayerMinimax(Player):
 
                 elif board.is_ball(x, y):
                     if   y <= 1:            score -= 10000
-                    elif y >= len(board)-1: score += 10000
+                    elif y >= len(board)-2: score += 10000
                     else:
                         if   y < len(board)//2: score -= 10 * y
                         elif y > len(board)//2: score += 10 * y
