@@ -2,11 +2,7 @@ from http.server              import SimpleHTTPRequestHandler
 from socketserver             import TCPServer
 from json                     import loads, dumps
 
-from random                   import randint
-from copy                     import deepcopy
 from importlib                import import_module
-
-from lib.PlayerClasses.Player import Player
 from lib.Board                import Board
 
 class PhutballHandler(SimpleHTTPRequestHandler):
