@@ -8,8 +8,8 @@ class Player(ABC):
 
     @staticmethod
     def get_successes(board):
-        boards  = Player.place_players(board)
-        boards += Player.kick_ball(board)
+        boards  = Player.kick_ball(board)
+        boards += Player.place_players(board)
         
         return boards
 
