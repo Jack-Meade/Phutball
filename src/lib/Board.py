@@ -33,6 +33,16 @@ class Board(object):
                 [4,4,4,4,4]
             ]
             self._ball = { "x" : 2, "y" : 2 }
+            # self._board = [
+            #     [3,3,3,3,3,3,3],
+            #     [0,3,3,3,3,3,0],
+            #     [0,5,5,5,5,5,0],
+            #     [0,5,5,1,5,5,0],
+            #     [0,5,5,5,5,5,0],
+            #     [0,4,4,4,4,4,0],
+            #     [4,4,4,4,4,4,4]
+            # ]
+            # self._ball = { "x" : 3, "y" : 3 }
 
         self._reset_copy = (deepcopy(self._board), deepcopy(self._ball))
 
