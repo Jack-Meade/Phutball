@@ -34,7 +34,7 @@ class PhutballHandler(SimpleHTTPRequestHandler):
 
 class PhutballServer(TCPServer):
     def __init__(self, addr, handler):
-        self._board      = Board(False)
+        self._board      = Board(True)
         self._p1_score   = 0
         self._p2_score   = 0
         self._p1_turn    = True
@@ -48,17 +48,12 @@ class PhutballServer(TCPServer):
         return self._p1_score
     def _get_p2_score(self):
         return self._p2_score
-    def _get_ai_running(self):
-        return self._ai_running
-    def _set_ai_running(self, state):
-        self._ai_running = state
     def _get_error_msg(self):
         return self._error_msg
 
     board      = property(_get_board)
     p1         = property(_get_p1_score)
     p2         = property(_get_p2_score)
-    ai_running = property(_get_ai_running, _set_ai_running)
     error_msg  = property(_get_error_msg)
 
     # Start up server
