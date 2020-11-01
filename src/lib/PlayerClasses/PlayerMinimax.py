@@ -8,7 +8,7 @@ class PlayerMinimax(Player):
         DEPTH = 3
 
         root       = Node(board)
-        root       = PlayerMinimax._build_tree(root, DEPTH)
+        # root       = PlayerMinimax._build_tree(root, DEPTH)
         root.value = PlayerMinimax._minimax(root, DEPTH, float('-inf'), float('inf'), player1)
         fav_child  = max(root.children) if player1 else min(root.children)
     
@@ -33,7 +33,8 @@ class PlayerMinimax(Player):
             return node.value or PlayerMinimax._heuristic(node.board)
 
         else:
-            highlow = float('-inf') if player1 else float('inf')
+            highlow       = float('-inf') if player1 else float('inf')
+            node.children = node.children if len(node.children) else [Node(cboard) for cboard in Player.get_successes(node.board)]
 
             for child in node.children:
                 child.value = PlayerMinimax._minimax(child, depth-1, alpha, beta, not player1)
