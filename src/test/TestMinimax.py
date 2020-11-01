@@ -3,6 +3,10 @@ from lib.PlayerClasses.PlayerMinimax import PlayerMinimax
 from lib                             import Node, Board
 
 class TestMinimax(TestCase):
+    @staticmethod
+    def main():
+        main()
+
     def setUp(self):
         pass
     

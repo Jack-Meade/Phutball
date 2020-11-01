@@ -1,8 +1,12 @@
-from unittest             import TestCase, main
+from unittest                 import TestCase, main
 from lib.PlayerClasses.Player import Player
 from lib.Board                import Board
 
 class TestPlayer(TestCase):
+    @staticmethod
+    def main():
+        main()
+
     def setUp(self):
         pass       
 
