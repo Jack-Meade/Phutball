@@ -13,6 +13,7 @@ class PhutballHandler(SimpleHTTPRequestHandler):
         self.end_headers()
 
         if body["action"] == "init":
+            self.server.restart()
             self.send_game_state()
 
         elif body["action"] == "player":
@@ -64,6 +65,18 @@ class PhutballServer(TCPServer):
     # Start up server
     def start(self):
         self.serve_forever()
+
+    def restart(self):
+        self._board      = Board(True)
+        self._p1_score   = 0
+        self._p2_score   = 0
+        self._p1_turn    = True
+        self._error_msg  = ""
+        self._ai         = {
+            "PlayerRandom"  : PlayerRandom(),
+            "PlayerMinimax" : PlayerMinimax(self._board),
+            "PlayerRL"      : PlayerRL()
+        }
 
     # Determine if player move is legal
     def player_turn(self, x, y, kicking, ai_type):
