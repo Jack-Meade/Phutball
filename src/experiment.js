@@ -35,8 +35,11 @@
   function get_form_data() {
     var experiments = []
     var i           = 0
+    var fieldset    = document.querySelector('fieldset')
+    var num_inputs  = fieldset.getElementsByTagName('input').length + fieldset.getElementsByTagName('select').length
+    
     for (var [key, value] of new FormData(form).entries()) { 
-      if (i % 5 == 0) {
+      if (i % num_inputs == 0) {
         experiment = {}
         experiments.push(experiment)
       }
