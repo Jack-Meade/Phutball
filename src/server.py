@@ -75,7 +75,7 @@ class PhutballServer(TCPServer):
                 if self._board.kick_ball(x, y):
                     if y <= 1: self._p2_score += 1
                     else:      self._p1_score += 1
-                    self._board.reset_board()
+                    self._reset_board()
 
             elif self._board.is_player(x, y):
                 self._error_msg = "Player already in that position!"
@@ -118,6 +118,7 @@ class PhutballServer(TCPServer):
                 self._p1_turn = not self._p1_turn
             else:
                 self._p1_turn = True
+                self._reset_board()
         self._error_msg = ""
                 
 
@@ -125,12 +126,14 @@ class PhutballServer(TCPServer):
         player    = getattr(import_module("lib.PlayerClasses."+ai_type), ai_type)
         new_board = player.take_turn(self._board, player1)
 
-        if   new_board.ball["y"] <= 1:                  self._p2_score += 1; self._board.reset_board(); return True
-        elif new_board.ball["y"] >= len(self._board)-2: self._p1_score += 1; self._board.reset_board(); return True
+        if   new_board.ball["y"] <= 1:                  self._p2_score += 1; return True
+        elif new_board.ball["y"] >= len(self._board)-2: self._p1_score += 1; return True
         else:                                         
             self._board = new_board
             return False
 
+    def _reset_board(self):
+        self._board.reset_board()
 
 def run_server(port, handler):
     server_running = False
