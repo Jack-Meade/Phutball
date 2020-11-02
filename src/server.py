@@ -2,8 +2,8 @@ from http.server              import SimpleHTTPRequestHandler
 from socketserver             import TCPServer
 from json                     import loads, dumps
 
-from importlib                import import_module
 from lib.Board                import Board
+from lib.PlayerClasses        import PlayerRandom, PlayerMinimax, PlayerRL
 
 class PhutballHandler(SimpleHTTPRequestHandler):
     def do_POST(self):
@@ -39,6 +39,11 @@ class PhutballServer(TCPServer):
         self._p2_score   = 0
         self._p1_turn    = True
         self._error_msg  = ""
+        self._ai         = {
+            "PlayerRandom"  : PlayerRandom(),
+            "PlayerMinimax" : PlayerMinimax(self._board),
+            "PlayerRL"      : PlayerRL()
+        }
 
         TCPServer.__init__(self, (addr[0], addr[1]), handler)
 
@@ -117,13 +122,12 @@ class PhutballServer(TCPServer):
             if not game_over:
                 self._p1_turn = not self._p1_turn
             else:
-                self._p1_turn = True
+                self._p1_turn = True          
                 self._reset_board()
         self._error_msg = ""
-                
 
     def _ai_turn(self, ai_type, player1):
-        player    = getattr(import_module("lib.PlayerClasses."+ai_type), ai_type)
+        player    = self._ai[ai_type]
         new_board = player.take_turn(self._board, player1)
 
         if   new_board.ball["y"] <= 1:                  self._p2_score += 1; return True
@@ -134,6 +138,8 @@ class PhutballServer(TCPServer):
 
     def _reset_board(self):
         self._board.reset_board()
+        self._ai["PlayerMinimax"] = PlayerMinimax(self._board)  
+
 
 def run_server(port, handler):
     server_running = False
@@ -160,4 +166,3 @@ if __name__ == '__main__':
     handler = PhutballHandler
     port    = 8080
     run_server(port, handler)
-    # test1(port, handler)
