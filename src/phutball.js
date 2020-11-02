@@ -65,19 +65,31 @@
     var ball_coords;
     for (var y = 0; y < board.length; y++) {
       for (var x = 0; x < board[y].length; x++) {
+        colour_cell(x, y)
         switch (board[y][x]) {
           case 3: case 4: case 5:
-            draw_grid(x, y, ctx);
+            draw_grid(x, y);
             break;
           case 2:
-            draw_player(x, y, ctx);
+            draw_player(x, y);
             break;
           case 1:
             ball_coords = { x : x, y : y }
         }
       }
     }
-    draw_ball(ball_coords.x, ball_coords.y, ctx);
+    draw_ball(ball_coords.x, ball_coords.y);
+  }
+
+  function colour_cell(x, y) {
+    switch (true) {
+      case y == 0:                              ctx.fillStyle = "#0099FF"; break;
+      case y == board.length-2:                 ctx.fillStyle = "#FF0000"; break;
+      case x == 0: case x == board[y].length-2: ctx.fillStyle = "#FFDEAD"; break;
+      default:                                  ctx.fillStyle = "#00FF00"
+
+    }
+    ctx.fillRect(x*SPACING, y*SPACING, SPACING, SPACING)
   }
 
   function draw_grid(x, y) {
