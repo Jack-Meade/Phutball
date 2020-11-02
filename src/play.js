@@ -18,6 +18,8 @@
     canvas.width  = (board[0].length-1)*SPACING
 
     draw_game(ctx);
+    
+    document.getElementById("header").innerHTML = "Playing against " + new URLSearchParams(window.location.search).get('rad_ai')
   }
 
   function player_turn(x, y) {
@@ -40,7 +42,7 @@
         y         : req_params.y,
         kicking   : kicking_ball,
         num_turns : req_params.num_turns,
-        ai_type   : document.querySelector('input[name="rad_ai"]:checked').value
+        ai_type   : new URLSearchParams(window.location.search).get('rad_ai')
       }));
 
       if (xhr.status != 200) {
@@ -137,10 +139,6 @@
     }, false);
     document.getElementById("but_kick").addEventListener('click', function() {
       if (!placing_player) { kicking_ball = !kicking_ball; update_status(); }
-    }, false);
-    document.getElementById("but_ai").addEventListener('click', function() {
-      send_request({ action : "ai", num_turns : Math.floor(num_turns=document.getElementById("input_num_turns").value) });
-      draw_game();
     }, false);
 
     canvas.addEventListener('click', function (e) {

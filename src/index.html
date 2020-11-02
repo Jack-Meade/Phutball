@@ -3,33 +3,28 @@
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="styles.css" />
-    <script src="./phutball.js"></script>
+    <script src="./index.js"></script>
     <title>Phutball</title>
   </head>
 
   <body>
-    <canvas></canvas><br>
     <section>
+      <button type="button" id="but_play">Play</button>
+      <button type="button" id="but_exp">Experiment</button>
+    </section>
+    <form id="play_options" action="./play.html">
+      <p>
+        Please choose the type of AI you wish to play against:
+      </p>
+
       <input type="radio" name="rad_ai" id="random" value="PlayerRandom" checked />
       <label for="random">Random</label>
       <input type="radio" name="rad_ai" id="minimax" value="PlayerMinimax" />
       <label for="minimax">Minimax</label>
       <input type="radio" name="rad_ai" id="rlearning" value="PlayerRL" />
       <label for="rlearning">Rlearning</label>
-    </section>
-    <section>
-      <button type="button" id="but_player">Player</button>
-      <button type="button" id="but_kick">Kick</button>
-      <button type="button" id="but_ai">Run</button>
-      <input  type="number" id="input_num_turns" value="100" />
-    </section>
-    <section>
-      <span id="status"></span>
-      <span id="error_msg"></span>
-    </section>
-    <section>
-      <h3 id="player1_score"></h3>
-      <h3 id="player2_score"></h3>
-    </section>
+
+      <button type="submit">Go!</button>
+    </form>
   </body>
 </html>
