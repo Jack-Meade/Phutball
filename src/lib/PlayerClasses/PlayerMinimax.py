@@ -1,18 +1,29 @@
+from copy    import deepcopy
 from .Player import Player
 from ..Node  import Node
-
+from ..Board import Board
 
 class PlayerMinimax(Player):
-    @staticmethod
-    def take_turn(board, player1):
-        DEPTH = 3
+    def __init__(self, board):
+        self._root = Node(Board(deepcopy(board.state)))
 
-        root       = Node(board)
-        # root       = PlayerMinimax._build_tree(root, DEPTH)
-        root.value = PlayerMinimax._minimax(root, DEPTH, float('-inf'), float('inf'), player1)
-        fav_child  = max(root.children) if player1 else min(root.children)
-    
-        return fav_child.board
+    def take_turn(self, board, player1):
+        # If player makes move, find the child/move picked
+        if board != self._root.board: self._root = self._find_child(board)
+
+        self._root.value = PlayerMinimax._minimax(self._root, 3, float('-inf'), float('inf'), player1)
+        self._root       = max(self._root.children) if player1 else min(self._root.children)
+
+        return deepcopy(self._root.board)
+
+    def _find_child(self, board):
+        if len(self._root.children):
+            for child in self._root.children:
+                if child.board == board: return child
+        
+        else: # Only the very first move will have no children, generate them if this is the case
+            self._root.children = [Node(cboard) for cboard in Player.get_successes(self._root.board)]
+            return self._find_child(board)
 
     @staticmethod
     def _build_tree(node, depth):
@@ -33,7 +44,7 @@ class PlayerMinimax(Player):
             return node.value or PlayerMinimax._heuristic(node.board)
 
         else:
-            highlow       = float('-inf') if player1 else float('inf')
+            highlow       = float('-inf') if player1            else float('inf')
             node.children = node.children if len(node.children) else [Node(cboard) for cboard in Player.get_successes(node.board)]
 
             for child in node.children:
