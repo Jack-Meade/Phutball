@@ -14,6 +14,8 @@
     xhr.open("POST", "", false)
 
     var experiments = get_form_data()
+
+    if (!experiments) return
     
     try {
       xhr.send(JSON.stringify({
@@ -43,6 +45,7 @@
         experiment = {}
         experiments.push(experiment)
       }
+      if (value == '') return false
       experiment[[key]] = value
       i++
     }
@@ -121,8 +124,8 @@
     document.getElementById('add').addEventListener('click', add_exp, false)
 
     document.querySelector("button[type='submit']").addEventListener('click', function(e) {
-      e.preventDefault()
       send_request()
+      e.preventDefault()
     }, false)
   }
 })()
