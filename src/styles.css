@@ -1,11 +1,15 @@
 body {
-  text-align: center;
+  text-align : center;
 }
 
 canvas {
-  border: 1px solid #000000;
+  border : 1px solid #000000;
 }
 
 span {
-  display: block;
+  display : block;
+}
+
+input[type="number"] {
+  max-width : 5em;
 }
