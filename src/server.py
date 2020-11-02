@@ -62,6 +62,7 @@ class PhutballServer(TCPServer):
 
     # Determine if player move is legal
     def player_turn(self, x, y, kicking, ai_type):
+        if not self._p1_turn: self._error_msg = "Please run the AI once more, you must be Player 1"; return
         self._error_msg = ""
         valid_turn      = False
 
@@ -117,6 +118,7 @@ class PhutballServer(TCPServer):
                 self._p1_turn = not self._p1_turn
             else:
                 self._p1_turn = True
+        self._error_msg = ""
                 
 
     def _ai_turn(self, ai_type, player1):
