@@ -153,15 +153,6 @@ def run_server(port, handler):
             print("{} in use, trying next".format(port))
             port += 1
 
-def test1(port, handler):
-    server = PhutballServer(("", port), handler)
-    with open("results.txt", "a") as file:
-        for i in range(100):
-            print("Test #{}".format(i))
-            server.run_ai(10000, "random")
-            file.write("Player 1: {}\nPlayer 2: {}\n\n".format(server.p1, server.p2))
-        print("Finished")
-
 if __name__ == '__main__':
     handler = PhutballHandler
     port    = 8080
