@@ -5,7 +5,7 @@ from ..Board import Board
 
 class PlayerMinimax(Player):
     def __init__(self, board):
-        self._root = Node(Board(deepcopy(board.state)))
+        self._root = Node(deepcopy(board))
 
     def take_turn(self, board, player1):
         # If player makes move, find the child/move picked

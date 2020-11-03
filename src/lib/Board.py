@@ -2,47 +2,14 @@ from enum                  import Enum
 from copy                  import deepcopy
 
 class Board(object):
-    def __init__(self, big_board):
+    def __init__(self, height, width):
         self._types = {
             "player" : 2,
             "p1goal" : 3,
             "p2goal" : 4,
             "empty"  : 5
         }
-        if big_board:
-            self._board = [
-                [3,3,3,3,3,3,3],
-                [0,3,3,3,3,3,0],#1
-                [0,5,5,5,5,5,0],#2
-                [0,5,5,5,5,5,0],#3
-                [0,5,5,5,5,5,0],#4
-                [0,5,5,1,5,5,0],#5
-                [0,5,5,5,5,5,0],#6
-                [0,5,5,5,5,5,0],#7
-                [0,5,5,5,5,5,0],#8
-                [0,4,4,4,4,4,0],#9
-                [4,4,4,4,4,4,4]
-            ]
-            self._ball = { "x" : 3, "y" : 5 }
-        else: 
-            self._board = [
-                [3,3,3,3,3],
-                [0,3,3,3,0],
-                [0,5,1,5,0],
-                [0,4,4,4,0],
-                [4,4,4,4,4]
-            ]
-            self._ball = { "x" : 2, "y" : 2 }
-            # self._board = [
-            #     [3,3,3,3,3,3,3],
-            #     [0,3,3,3,3,3,0],
-            #     [0,5,5,5,5,5,0],
-            #     [0,5,5,1,5,5,0],
-            #     [0,5,5,5,5,5,0],
-            #     [0,4,4,4,4,4,0],
-            #     [4,4,4,4,4,4,4]
-            # ]
-            # self._ball = { "x" : 3, "y" : 3 }
+        self._board, self._ball = Board._gen_board(height, width)
 
         self._reset_copy = (deepcopy(self._board), deepcopy(self._ball))
 
@@ -125,4 +92,39 @@ class Board(object):
 
     def reset_board(self):
         self._board, self._ball = deepcopy(self._reset_copy[0]), deepcopy(self._reset_copy[1])
+
+    @staticmethod
+    def _gen_board(height, width):
+        board = []
+        ball  = { "x" : width//2, "y" : height//2 }
+
+        for y in range(height):
+            if   y == 0:          
+                board.append([3 for _ in range(width)])
+
+            elif y == 1:
+                board.append([3 for _ in range(width)])
+                board[-1][0]        = 0
+                board[-1][width-1]  = 0
+
+            elif y == height-1:   
+                board.append([4 for _ in range(width)])
+
+            elif y == height-2:
+                board.append([4 for _ in range(width)])
+                board[-1][0]        = 0
+                board[-1][width-1]  = 0
+
+            elif y == height//2:
+                board.append([5 for _ in range(width)])
+                board[-1][0]        = 0
+                board[-1][width-1]  = 0
+                board[-1][width//2] = 1
+
+            else:
+                board.append([5 for _ in range(width)])
+                board[-1][0]        = 0
+                board[-1][width-1]  = 0
+
+        return board, ball
 
