@@ -7,6 +7,7 @@
   function init() {
     setup_listeners()
     form = document.querySelector('form')
+    add_exp()
   }
 
   function send_request() {
@@ -26,8 +27,8 @@
       if (xhr.status != 200) {
         console.log(`Error ${xhr.status}: ${xhr.statusText}`)
       } else {
-        var response  = JSON.parse(xhr.response)
-        
+        var response = JSON.parse(xhr.response)
+        create_table(response.results)
       }
     } catch(err) {
       alert(`${err}\n${xhr.response}`)
@@ -46,6 +47,17 @@
         experiments.push(experiment)
       }
       if (value == '') return false
+      
+      switch (true) {
+        case key === "height": case key === "width":
+          value = Number(value)
+          if (value % 2 == 0) { return false }
+          break
+
+        case key === "nofgames":
+          value = Number(value)
+      }
+
       experiment[[key]] = value
       i++
     }
@@ -118,6 +130,53 @@
 
   function del_exp(e) {
     e.target.parentNode.remove()
+  }
+
+  function create_table(results) {
+    var section = document.querySelector('#results-table')
+
+    var previous_table = section.querySelector('table')
+    if (previous_table) { previous_table.remove() }
+    
+    var table = document.createElement('table')
+    table     = add_table_headers(table, results)
+
+    for (var i = 0; i < results.length; i++) {
+      row = create_row(i, results[i])
+      table.appendChild(row)
+    }
+
+    section.appendChild(table)
+  }
+
+  function add_table_headers(table, results) {
+    var row = document.createElement('tr')
+    row.appendChild(create_cell('th', '#'))
+
+    for (var key in results[0]) {
+      row.appendChild(create_cell('th', key.toUpperCase()))
+    }
+
+    table.appendChild(row)
+    return table
+  }
+  
+  function create_row(exp_num, results) {
+    var row = document.createElement('tr')
+    
+    row.appendChild(create_cell('td', exp_num))
+    
+    for (var key in results) {
+      row.appendChild(create_cell('td', results[key]))
+    }
+
+    return row
+  }
+
+  function create_cell(type, innerHTML) {
+    var cell       = document.createElement(type)
+    cell.innerHTML = innerHTML
+    return cell
   }
 
   function setup_listeners() {

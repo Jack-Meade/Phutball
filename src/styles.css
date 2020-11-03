@@ -13,3 +13,11 @@ span {
 input[type="number"] {
   max-width : 5em;
 }
+
+table {
+  width : 100%;
+}
+
+th, td {
+  border : 1px solid black 
+}
