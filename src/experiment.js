@@ -139,7 +139,7 @@
     if (previous_table) { previous_table.remove() }
     
     var table = document.createElement('table')
-    table     = add_table_headers(table, results)
+    table.appendChild(create_table_headers(results))
 
     for (var i = 0; i < results.length; i++) {
       row = create_row(i, results[i])
@@ -149,7 +149,7 @@
     section.appendChild(table)
   }
 
-  function add_table_headers(table, results) {
+  function create_table_headers(results) {
     var row = document.createElement('tr')
     row.appendChild(create_cell('th', '#'))
 
@@ -157,8 +157,7 @@
       row.appendChild(create_cell('th', key.toUpperCase()))
     }
 
-    table.appendChild(row)
-    return table
+    return row
   }
   
   function create_row(exp_num, results) {
