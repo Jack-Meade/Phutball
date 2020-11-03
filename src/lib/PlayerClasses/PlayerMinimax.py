@@ -29,19 +29,6 @@ class PlayerMinimax(Player):
             return self._find_child(board)
 
     @staticmethod
-    def _build_tree(node, depth):
-        if depth == 0 or node.is_terminal():
-            return node
-
-        else:
-            node.children = [Node(cboard) for cboard in Player.get_successes(node.board)]
-
-            for child in node.children:
-                child = PlayerMinimax._build_tree(child, depth-1)
-                
-            return node
-
-    @staticmethod
     def _minimax(node, depth, alpha, beta, player1):
         if depth == 0 or node.is_terminal():
             return node.value or PlayerMinimax._heuristic(node.board)
