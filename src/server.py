@@ -153,8 +153,8 @@ class PhutballServer(TCPServer):
     def run_ai(self, params):
         self._results = []
         for i, experiment in enumerate(params):
-            board                  = Board(int(experiment["height"]), int(experiment["width"]))
-            experiment["nofgames"] = int(experiment["nofgames"])
+            board      = Board(experiment["height"], experiment["width"])
+            games_left = experiment["nofgames"]
 
             ai_types = {
                 "PlayerRandom"  : PlayerRandom(),
@@ -163,13 +163,16 @@ class PhutballServer(TCPServer):
             }
 
             self._results.append({
-                "time"   : [],
-                "winner" : [],
-                "type"   : []
+                "time"    : 0,
+                "player1" : 0,
+                "player2" : 0,
+                "height"  : experiment["height"],
+                "width"   : experiment["width"],
+                "games"   : experiment["nofgames"]
             })
 
             start_time = time()
-            while experiment["nofgames"]:
+            while games_left:
                 player = ai_types[experiment["player1"]] if self._p1_turn else ai_types[experiment["player2"]]
 
                 result = self._ai_turn_exp(board, player, self._p1_turn,)
@@ -177,23 +180,25 @@ class PhutballServer(TCPServer):
                 if isinstance(result, Board):
                     self._p1_turn = not self._p1_turn
                     board         = result
+
                 else:
-                    self._results[i]["time"].append(time() - start_time)
-                    self._results[i]["winner"].append(result)
-                    self._results[i]["type"].append(experiment["player1"] + " vs " + experiment["player2"])
+                    self._results[i]["time"] += time() - start_time
+                    self._results[i][result] += 1
 
                     self._p1_turn = True          
                     board.reset_board()
                     ai_types["PlayerMinimax"] = PlayerMinimax(board)
-                    experiment["nofgames"] -= 1
+                    games_left -= 1
                     
                     start_time = time()
+
+            self.results[i]["time"] = self.results[i]["time"] / experiment["nofgames"]
 
     def _ai_turn_exp(self, board, player, player1):
         new_board = player.take_turn(board, player1)
 
-        if   new_board.ball["y"] <= 1:            self._p2_score += 1; return "p2"
-        elif new_board.ball["y"] >= len(board)-2: self._p1_score += 1; return "p1"
+        if   new_board.ball["y"] <= 1:            self._p2_score += 1; return "player2"
+        elif new_board.ball["y"] >= len(board)-2: self._p1_score += 1; return "player1"
         else:                                         
             board = new_board
             return board
