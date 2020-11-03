@@ -2,6 +2,7 @@ from http.server              import SimpleHTTPRequestHandler
 from socketserver             import TCPServer
 from json                     import loads, dumps
 
+from time                     import time
 from lib.Board                import Board
 from lib.PlayerClasses        import PlayerRandom, PlayerMinimax, PlayerRL
 
@@ -20,9 +21,9 @@ class PhutballHandler(SimpleHTTPRequestHandler):
             self.server.player_turn(body["x"], body["y"], body["kicking"], body["ai_type"])
             self.send_game_state()
 
-        elif body["action"] == "ai":
-            self.server.run_ai(body["num_turns"], body["ai_type"])
-            self.send_game_state()
+        elif body["action"] == "experiments":
+            self.server.run_ai(body["experiments"])
+            self.send_results()
 
 
     def send_game_state(self):
@@ -31,6 +32,11 @@ class PhutballHandler(SimpleHTTPRequestHandler):
             "p1"        : self.server.p1,
             "p2"        : self.server.p2,
             "error_msg" : self.server.error_msg
+        }), encoding='utf8'))
+
+    def send_results(self):
+        self.wfile.write(bytes(dumps({
+            "results" : self.server.results
         }), encoding='utf8'))
 
 class PhutballServer(TCPServer):
@@ -45,6 +51,7 @@ class PhutballServer(TCPServer):
             "PlayerMinimax" : PlayerMinimax(self._board),
             "PlayerRL"      : PlayerRL()
         }
+        self._results    = []
 
         TCPServer.__init__(self, (addr[0], addr[1]), handler)
 
@@ -56,11 +63,14 @@ class PhutballServer(TCPServer):
         return self._p2_score
     def _get_error_msg(self):
         return self._error_msg
+    def _get_results(self):
+        return self._results
 
     board      = property(_get_board)
     p1         = property(_get_p1_score)
     p2         = property(_get_p2_score)
     error_msg  = property(_get_error_msg)
+    results    = property(_get_results)
 
     # Start up server
     def start(self):
@@ -77,6 +87,7 @@ class PhutballServer(TCPServer):
             "PlayerMinimax" : PlayerMinimax(self._board),
             "PlayerRL"      : PlayerRL()
         }
+        self._results    = []
 
     # Determine if player move is legal
     def player_turn(self, x, y, kicking, ai_type):
@@ -129,25 +140,63 @@ class PhutballServer(TCPServer):
         if valid_turn:
             self._ai_turn(ai_type, False)
 
-    def run_ai(self, num_turns, ai_type):
-        for _ in range(num_turns):
-            game_over = self._ai_turn(ai_type, self._p1_turn)
-            if not game_over:
-                self._p1_turn = not self._p1_turn
-            else:
-                self._p1_turn = True          
-                self._reset_board()
-        self._error_msg = ""
-
     def _ai_turn(self, ai_type, player1):
         player    = self._ai[ai_type]
         new_board = player.take_turn(self._board, player1)
 
-        if   new_board.ball["y"] <= 1:                  self._p2_score += 1; return True
-        elif new_board.ball["y"] >= len(self._board)-2: self._p1_score += 1; return True
+        if   new_board.ball["y"] <= 1:                  self._p2_score += 1; self._reset_board(); return True
+        elif new_board.ball["y"] >= len(self._board)-2: self._p1_score += 1; self._reset_board(); return True
         else:                                         
             self._board = new_board
             return False
+
+    def run_ai(self, params):
+        self._results = []
+        for i, experiment in enumerate(params):
+            board                  = Board(int(experiment["height"]), int(experiment["width"]))
+            experiment["nofgames"] = int(experiment["nofgames"])
+
+            ai_types = {
+                "PlayerRandom"  : PlayerRandom(),
+                "PlayerMinimax" : PlayerMinimax(board),
+                "PlayerRL"      : PlayerRL()
+            }
+
+            self._results.append({
+                "time"   : [],
+                "winner" : [],
+                "type"   : []
+            })
+
+            start_time = time()
+            while experiment["nofgames"]:
+                player = ai_types[experiment["player1"]] if self._p1_turn else ai_types[experiment["player2"]]
+
+                result = self._ai_turn_exp(board, player, self._p1_turn,)
+
+                if isinstance(result, Board):
+                    self._p1_turn = not self._p1_turn
+                    board         = result
+                else:
+                    self._results[i]["time"].append(time() - start_time)
+                    self._results[i]["winner"].append(result)
+                    self._results[i]["type"].append(experiment["player1"] + " vs " + experiment["player2"])
+
+                    self._p1_turn = True          
+                    board.reset_board()
+                    ai_types["PlayerMinimax"] = PlayerMinimax(board)
+                    experiment["nofgames"] -= 1
+                    
+                    start_time = time()
+
+    def _ai_turn_exp(self, board, player, player1):
+        new_board = player.take_turn(board, player1)
+
+        if   new_board.ball["y"] <= 1:            self._p2_score += 1; return "p2"
+        elif new_board.ball["y"] >= len(board)-2: self._p1_score += 1; return "p1"
+        else:                                         
+            board = new_board
+            return board
 
     def _reset_board(self):
         self._board.reset_board()
