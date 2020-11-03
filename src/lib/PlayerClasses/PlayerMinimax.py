@@ -1,4 +1,5 @@
 from copy    import deepcopy
+from random  import randint
 from .Player import Player
 from ..Node  import Node
 from ..Board import Board
@@ -65,14 +66,14 @@ class PlayerMinimax(Player):
         for y in range(len(board)):
             for x in range(len(board.state[y])):
                 if board.is_player(x, y):
-                    if   y < len(board)//2: score -= 1
-                    elif y > len(board)//2: score += 1
+                    if   y < len(board)//2: score -= 10*y
+                    elif y > len(board)//2: score += 10*y 
 
                 elif board.is_ball(x, y):
-                    if   y <= 1:            score -= 10000
-                    elif y >= len(board)-2: score += 10000
+                    if   y <= 1:            score -= 10000*y 
+                    elif y >= len(board)-2: score += 10000*y 
                     else:
-                        if   y < len(board)//2: score -= 10 * y
-                        elif y > len(board)//2: score += 10 * y
+                        if   y < len(board)//2: score -= 100*y
+                        elif y > len(board)//2: score += 100*y
 
         return score
