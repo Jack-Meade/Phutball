@@ -12,7 +12,9 @@ class PlayerMinimax(Player):
         if board != self._root.board: self._root = self._find_child(board)
 
         self._root.value = PlayerMinimax._minimax(self._root, 3, float('-inf'), float('inf'), player1)
-        self._root       = max(self._root.children) if player1 else min(self._root.children)
+        best_move        = max(self._root.children) if player1 else min(self._root.children)
+        best_moves       = [node for node in self._root.children if node.value == best_move.value]
+        self._root       = best_moves.pop(randint(0, len(best_moves)-1))
 
         return deepcopy(self._root.board)
 
@@ -53,7 +55,7 @@ class PlayerMinimax(Player):
                 if player1: highlow = max(highlow, child.value); alpha = max(alpha, child.value)
                 else:       highlow = min(highlow, child.value); beta  = min(beta,  child.value)
 
-                if beta <= alpha: break
+                if beta < alpha: break
 
             return highlow
 
