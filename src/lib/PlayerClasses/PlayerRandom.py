@@ -3,6 +3,6 @@ from .Player import Player
 
 class PlayerRandom(Player):
     @staticmethod
-    def take_turn(board, p1):
+    def take_turn(board, p1, depth):
         boards = Player.get_successes(board)
         return boards.pop(randint(0, len(boards)-1))

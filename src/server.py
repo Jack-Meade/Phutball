@@ -142,7 +142,7 @@ class PhutballServer(TCPServer):
 
     def _ai_turn(self, ai_type, player1):
         player    = self._ai[ai_type]
-        new_board = player.take_turn(self._board, player1)
+        new_board = player.take_turn(self._board, player1, 3)
 
         if   new_board.ball["y"] <= 1:                  self._p2_score += 1; self._reset_board(); return True
         elif new_board.ball["y"] >= len(self._board)-2: self._p1_score += 1; self._reset_board(); return True
@@ -176,8 +176,9 @@ class PhutballServer(TCPServer):
             start_time = time()
             while games_left:
                 player = ai_types[experiment["player1"]] if self._p1_turn else ai_types[experiment["player2"]]
+                depth  = self._determine_depth(experiment)
 
-                result = self._ai_turn_exp(board, player, self._p1_turn,)
+                result = self._ai_turn_exp(board, player, self._p1_turn, depth)
 
                 if isinstance(result, Board):
                     self._p1_turn = not self._p1_turn
@@ -196,14 +197,23 @@ class PhutballServer(TCPServer):
 
             self.results[i]["time"] = round(self.results[i]["time"] / experiment["nofgames"], 6)
 
-    def _ai_turn_exp(self, board, player, player1):
-        new_board = player.take_turn(board, player1)
+    def _ai_turn_exp(self, board, player, player1, depth):
+        new_board = player.take_turn(board, player1, depth)
 
         if   new_board.ball["y"] <= 1:            self._p2_score += 1; return "player2"
         elif new_board.ball["y"] >= len(board)-2: self._p1_score += 1; return "player1"
         else:                                         
             board = new_board
             return board
+
+    def _determine_depth(self, experiment):
+        if self._p1_turn:
+            if "p1-depth" in experiment: return experiment["p1-depth"]
+        else:
+            if "p2-depth" in experiment: return experiment["p2-depth"]
+        
+        return None
+
 
     def _reset_board(self):
         self._board.reset_board()

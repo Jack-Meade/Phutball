@@ -12,7 +12,7 @@
 
   function send_request() {
     var xhr = new XMLHttpRequest()
-    xhr.open("POST", "", false)
+    xhr.open('POST', '', false)
 
     var experiments = get_form_data()
 
@@ -49,12 +49,12 @@
       if (value == '') return false
       
       switch (true) {
-        case key === "height": case key === "width":
+        case key === 'height': case key === 'width':
           value = Number(value)
           if (value % 2 == 0) { return false }
           break
 
-        case key === "nofgames":
+        case key === 'nofgames': case key.includes("depth"):
           value = Number(value)
       }
 
@@ -88,48 +88,66 @@
   }
 
   function create_label(innerHTML, htmlFor) {
-    var element       = document.createElement('label')
-    element.htmlFor   = htmlFor
-    element.innerHTML = innerHTML
-    return element
+    var label       = document.createElement('label')
+    label.htmlFor   = htmlFor
+    label.innerHTML = innerHTML
+    return label
   }
 
   function create_input(type, id) {
-    var element      = document.createElement('input')
-    element.type     = type
-    element.id       = id
-    element.name     = id
-    element.required = true
-    return element
+    var input      = document.createElement('input')
+    input.type     = type
+    input.id       = id
+    input.name     = id
+    input.required = true
+    return input
   }
 
   function create_select(id) {
-    var element  = document.createElement('select')
-    element.id   = id
-    element.name = id
-    element.appendChild(create_option('Random', 'PlayerRandom'))
-    element.appendChild(create_option('Minimax', 'PlayerMinimax'))
-    element.appendChild(create_option('Rlearning', 'PlayerRL'))
-    return element
+    var select  = document.createElement('select')
+    select.id   = id
+    select.name = id
+    select.appendChild(create_option('Random', 'PlayerRandom'))
+    select.appendChild(create_option('Minimax', 'PlayerMinimax'))
+    select.appendChild(create_option('Rlearning', 'PlayerRL'))
+    select.onchange = is_minimax
+    return select
   }
 
   function create_option(innerHTML, value) {
-    var element       = document.createElement('option')
-    element.innerHTML = innerHTML
-    element.value     = value
-    return element
+    var option       = document.createElement('option')
+    option.innerHTML = innerHTML
+    option.value     = value
+    return option
   }
 
   function create_button(innerHTML, type) {
-    var element       = document.createElement('button')
-    element.innerHTML = innerHTML
-    element.type      = type
-    element.addEventListener('click', del_exp, false)
-    return element
+    var button       = document.createElement('button')
+    button.innerHTML = innerHTML
+    button.type      = type
+    button.onclick   = del_exp
+    return button
   }
 
   function del_exp(e) {
     e.target.parentNode.remove()
+  }
+
+  function is_minimax(e) {
+    var node   = e.target
+    var index  = Array.prototype.indexOf.call(node.parentNode.children, node)
+    var player = (index == 7) ? 'p1' : 'p2'
+
+    if (node.value === 'PlayerMinimax') {
+      node.parentNode.insertBefore(create_input('number', `${player}-depth`), node.parentNode.children[index+1])
+      node.parentNode.insertBefore(create_label(`${player} depth:`, `${player}-depth`), node.parentNode.children[index+1])
+      node.mini_options_added = true
+
+    } else if (node.mini_options_added) {
+      node.parentNode.children[index+1].remove()
+      node.parentNode.children[index+1].remove()
+      node.mini_options_added = false
+    }
   }
 
   function create_table(results) {
@@ -181,7 +199,7 @@
   function setup_listeners() {
     document.getElementById('add').addEventListener('click', add_exp, false)
 
-    document.querySelector("button[type='submit']").addEventListener('click', function(e) {
+    document.querySelector('button[type="submit"]').addEventListener('click', function(e) {
       send_request()
       e.preventDefault()
     }, false)

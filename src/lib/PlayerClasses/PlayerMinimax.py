@@ -8,11 +8,11 @@ class PlayerMinimax(Player):
     def __init__(self, board):
         self._root = Node(deepcopy(board))
 
-    def take_turn(self, board, player1):
+    def take_turn(self, board, player1, depth):
         # If player makes move, find the child/move picked
         if board != self._root.board: self._root = self._find_child(board)
 
-        self._root.value = PlayerMinimax._minimax(self._root, 3, float('-inf'), float('inf'), player1)
+        self._root.value = PlayerMinimax._minimax(self._root, depth, float('-inf'), float('inf'), player1)
         best_move        = max(self._root.children) if player1 else min(self._root.children)
         best_moves       = [node for node in self._root.children if node.value == best_move.value]
         self._root       = best_moves.pop(randint(0, len(best_moves)-1))
