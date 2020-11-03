@@ -164,11 +164,13 @@ class PhutballServer(TCPServer):
 
             self._results.append({
                 "time"    : 0,
-                "player1" : 0,
-                "player2" : 0,
                 "height"  : experiment["height"],
                 "width"   : experiment["width"],
-                "games"   : experiment["nofgames"]
+                "games"   : experiment["nofgames"],
+                "player1" : 0,
+                "player2" : 0,
+                "p1-type" : experiment["player1"].replace("Player", ""),
+                "p2-type" : experiment["player2"].replace("Player", "")
             })
 
             start_time = time()
@@ -192,7 +194,7 @@ class PhutballServer(TCPServer):
                     
                     start_time = time()
 
-            self.results[i]["time"] = self.results[i]["time"] / experiment["nofgames"]
+            self.results[i]["time"] = round(self.results[i]["time"] / experiment["nofgames"], 6)
 
     def _ai_turn_exp(self, board, player, player1):
         new_board = player.take_turn(board, player1)
