@@ -142,7 +142,7 @@ class PhutballServer(TCPServer):
 
     def _ai_turn(self, ai_type, player1):
         player    = self._ai[ai_type]
-        new_board = player.take_turn(self._board, player1, 3)
+        new_board = player.take_turn(self._board, player1, 3, "heuristic1")
 
         if   new_board.ball["y"] <= 1:                  self._p2_score += 1; self._reset_board(); return True
         elif new_board.ball["y"] >= len(self._board)-2: self._p1_score += 1; self._reset_board(); return True
@@ -163,22 +163,27 @@ class PhutballServer(TCPServer):
             }
 
             self._results.append({
-                "time"    : 0,
-                "height"  : experiment["height"],
-                "width"   : experiment["width"],
-                "games"   : experiment["nofgames"],
-                "player1" : 0,
-                "player2" : 0,
-                "p1-type" : experiment["player1"].replace("Player", ""),
-                "p2-type" : experiment["player2"].replace("Player", "")
+                "time"         : 0,
+                "height"       : experiment["height"],
+                "width"        : experiment["width"],
+                "games"        : experiment["nofgames"],
+                "player1"      : 0,
+                "player2"      : 0,
+                "p1-type"      : experiment["player1"].replace("Player", ""),
+                "p1-depth"     : experiment["p1-depth"]             if "p1-depth"     in experiment else None,
+                "p1-heuristic" : experiment["p1-heuristic"].title() if "p1-heuristic" in experiment else None,
+                "p2-type"      : experiment["player2"].replace("Player", ""),
+                "p2-depth"     : experiment["p2-depth"]             if "p2-depth"     in experiment else None,
+                "p2-heuristic" : experiment["p2-heuristic"].title() if "p2-heuristic" in experiment else None
             })
 
             start_time = time()
             while games_left:
-                player = ai_types[experiment["player1"]] if self._p1_turn else ai_types[experiment["player2"]]
-                depth  = self._determine_depth(experiment)
+                player    = ai_types[experiment["player1"]] if self._p1_turn else ai_types[experiment["player2"]]
+                depth     = self._determine_params(experiment, "p1-depth"     if self._p1_turn else "p2-depth")
+                heuristic = self._determine_params(experiment, "p1-heuristic" if self._p1_turn else "p2-heuristic")
 
-                result = self._ai_turn_exp(board, player, self._p1_turn, depth)
+                result = self._ai_turn_exp(board, player, self._p1_turn, depth, heuristic)
 
                 if isinstance(result, Board):
                     self._p1_turn = not self._p1_turn
@@ -197,8 +202,8 @@ class PhutballServer(TCPServer):
 
             self.results[i]["time"] = round(self.results[i]["time"] / experiment["nofgames"], 6)
 
-    def _ai_turn_exp(self, board, player, player1, depth):
-        new_board = player.take_turn(board, player1, depth)
+    def _ai_turn_exp(self, board, player, player1, depth, heuristic):
+        new_board = player.take_turn(board, player1, depth, heuristic)
 
         if   new_board.ball["y"] <= 1:            self._p2_score += 1; return "player2"
         elif new_board.ball["y"] >= len(board)-2: self._p1_score += 1; return "player1"
@@ -206,14 +211,9 @@ class PhutballServer(TCPServer):
             board = new_board
             return board
 
-    def _determine_depth(self, experiment):
-        if self._p1_turn:
-            if "p1-depth" in experiment: return experiment["p1-depth"]
-        else:
-            if "p2-depth" in experiment: return experiment["p2-depth"]
-        
+    def _determine_params(self, experiment, key):
+        if key in experiment: return experiment[key]
         return None
-
 
     def _reset_board(self):
         self._board.reset_board()

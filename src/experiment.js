@@ -75,10 +75,18 @@
     new_exp.appendChild(create_input('number', 'nofgames'))
 
     new_exp.appendChild(create_label('Player 1:', 'player1'))
-    new_exp.appendChild(create_select('player1'))
+    new_exp.appendChild(create_select('player1', [
+      { 'innerHTML' : 'Random',    'value' : 'PlayerRandom' },
+      { 'innerHTML' : 'Minimax',   'value' : 'PlayerMinimax' },
+      { 'innerHTML' : 'Rlearning', 'value' : 'PlayerRL' }
+    ]))
 
     new_exp.appendChild(create_label('Player 2:', 'player2'))
-    new_exp.appendChild(create_select('player2'))
+    new_exp.appendChild(create_select('player2', [
+      { 'innerHTML' : 'Random',    'value' : 'PlayerRandom' },
+      { 'innerHTML' : 'Minimax',   'value' : 'PlayerMinimax' },
+      { 'innerHTML' : 'Rlearning', 'value' : 'PlayerRL' }
+    ]))
 
     new_exp.appendChild(create_button('Delete', 'button'))
 
@@ -101,13 +109,13 @@
     return input
   }
 
-  function create_select(id) {
+  function create_select(id, options) {
     var select  = document.createElement('select')
     select.id   = id
     select.name = id
-    select.appendChild(create_option('Random', 'PlayerRandom'))
-    select.appendChild(create_option('Minimax', 'PlayerMinimax'))
-    select.appendChild(create_option('Rlearning', 'PlayerRL'))
+    options.forEach(option => {
+      select.appendChild(create_option(option.innerHTML, option.value))
+    })
     select.onchange = is_minimax
     return select
   }
@@ -137,11 +145,19 @@
     var player = (index == 7) ? 'p1' : 'p2'
 
     if (node.value === 'PlayerMinimax') {
+      node.parentNode.insertBefore(create_select(`${player}-heuristic`, [
+        { 'innerHTML' : 'Heuristic1',    'value' : 'heuristic1' },
+        { 'innerHTML' : 'Heuristic2',    'value' : 'heuristic2' },
+        { 'innerHTML' : 'Heuristic3',    'value' : 'heuristic3' },
+      ]), node.parentNode.children[index+1])
+      node.parentNode.insertBefore(create_label(`${player.toUpperCase()} Heuristic:`, `${player}-heuristic`), node.parentNode.children[index+1])
       node.parentNode.insertBefore(create_input('number', `${player}-depth`), node.parentNode.children[index+1])
       node.parentNode.insertBefore(create_label(`${player.toUpperCase()} Depth:`, `${player}-depth`), node.parentNode.children[index+1])
       node.mini_options_added = true
 
     } else if (node.mini_options_added) {
+      node.parentNode.children[index+1].remove()
+      node.parentNode.children[index+1].remove()
       node.parentNode.children[index+1].remove()
       node.parentNode.children[index+1].remove()
       node.mini_options_added = false
