@@ -21,3 +21,31 @@ table {
 th, td {
   border : 1px solid black 
 }
+
+#tab {
+  display    : inline-block;
+  margin-top : 2.5em;
+  overflow   : hidden;
+  border     : 1px solid black;
+}
+
+#tab button {
+  float      : left;
+  border     : none;
+  outline    : none;
+  cursor     : pointer;
+  padding    : 0.75em;
+  transition : 0.5s;
+}
+
+#tab button:hover {
+  background-color : #888;
+}
+
+#tab button.active {
+  background-color : #BBB;
+}
+
+#results section:not(#tab) {
+  display : none;
+}

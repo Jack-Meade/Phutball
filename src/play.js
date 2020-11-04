@@ -19,7 +19,7 @@
 
     draw_game(ctx);
     
-    document.getElementById("header").innerHTML = "Playing against " + new URLSearchParams(window.location.search).get('rad_ai')
+    document.getElementById("header").innerHTML = "Playing against " + new URLSearchParams(window.location.search).get('rad_ai').replace('Player', '')
   }
 
   function player_turn(x, y) {
