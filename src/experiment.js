@@ -37,31 +37,29 @@
 
   function get_form_data() {
     var experiments = []
-    var i           = 0
-    var fieldset    = document.querySelector('fieldset')
-    var num_inputs  = fieldset.getElementsByTagName('input').length + fieldset.getElementsByTagName('select').length
+    var fieldsets   = Array.from(form.getElementsByTagName('fieldset'))
     
-    for (var [key, value] of new FormData(form).entries()) { 
-      if (i % num_inputs == 0) {
-        experiment = {}
-        experiments.push(experiment)
-      }
-      if (value == '') return false
+    fieldsets_okay = fieldsets.every(fieldset => {
+      var experiment = {}
+      var inputs     = Array.from(fieldset.getElementsByTagName('input')).concat(Array.from(fieldset.getElementsByTagName('select')))
       
-      switch (true) {
-        case key === 'height': case key === 'width':
-          value = Number(value)
-          if (value % 2 == 0) { return false }
-          break
+      inputs_okay = inputs.every(input => {
+        if (input.value === '') { return false }
+        
+        experiment[[input.id]] = isNaN(input.value) ? input.value : Number(input.value)
 
-        case key === 'nofgames': case key.includes("depth"):
-          value = Number(value)
-      }
+        if (input.id === 'height' || input.id === 'width') { 
+          if (experiment[[input.id]] % 2 === 0) { return false }
+        }
 
-      experiment[[key]] = value
-      i++
-    }
-    return experiments
+        return true
+      })
+
+      experiments.push(experiment)
+      return inputs_okay
+    })
+
+    return fieldsets_okay ? experiments : null
   }
 
   function add_exp() {
@@ -140,7 +138,7 @@
 
     if (node.value === 'PlayerMinimax') {
       node.parentNode.insertBefore(create_input('number', `${player}-depth`), node.parentNode.children[index+1])
-      node.parentNode.insertBefore(create_label(`${player} depth:`, `${player}-depth`), node.parentNode.children[index+1])
+      node.parentNode.insertBefore(create_label(`${player.toUpperCase()} Depth:`, `${player}-depth`), node.parentNode.children[index+1])
       node.mini_options_added = true
 
     } else if (node.mini_options_added) {
