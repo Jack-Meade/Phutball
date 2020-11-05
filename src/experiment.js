@@ -50,10 +50,11 @@ import * as ce from './lib/create_element.js'
       var inputs_okay = inputs.every(input => {
         if (input.value === '') { return false }
         
-        experiment[[input.id]] = isNaN(input.value) ? input.value : Number(input.value)
+        experiment[[input.className]] = isNaN(input.value) ? input.value : Number(input.value)
 
-        if (input.id === 'height' || input.id === 'width') { 
-          if (experiment[[input.id]] % 2 === 0) { return false }
+        if (input.className === 'height' || input.className === 'width') { 
+          if      (experiment[[input.className]] % 2 === 0) { return false }
+          else if (experiment[[input.className]] < 4)       { return false }
         }
 
         return true

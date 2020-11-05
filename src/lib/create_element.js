@@ -6,18 +6,18 @@ export function create_label(innerHTML, htmlFor) {
 }
 
 export function create_input(type, id) {
-  var input      = document.createElement('input')
-  input.type     = type
-  input.id       = id
-  input.name     = id
-  input.required = true
+  var input       = document.createElement('input')
+  input.type      = type
+  input.className = id
+  input.name      = id
+  input.required  = true
   return input
 }
 
 export function create_select(id, options) {
-  var select  = document.createElement('select')
-  select.id   = id
-  select.name = id
+  var select       = document.createElement('select')
+  select.className = id
+  select.name      = id
   options.forEach(option => {
     select.appendChild(create_option(option.innerHTML, option.value))
   })
