@@ -29,7 +29,7 @@ export function create_select(id, options) {
   return select
 }
 
-export function create_option(innerHTML, value) {
+function create_option(innerHTML, value) {
   var option       = document.createElement('option')
   option.innerHTML = innerHTML
   option.value     = value
@@ -88,3 +88,45 @@ export function create_cell(type, innerHTML) {
   cell.innerHTML = innerHTML
   return cell
 }
+
+function gen_colours(num_results) {
+  var colours = []
+  for (var i=0; i < num_results; i++) {
+    colours.push(`rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, ${Math.floor(Math.random() * 256)}, 1)`)
+  }
+  return colours
+}
+
+export function create_graph(results) {
+  var graph_section = document.querySelector('#results-graph')
+
+  var time_canvas          = (document.querySelector('#time_canvas')) ? document.querySelector('#time_canvas') : document.createElement('canvas')
+  time_canvas.id           = 'time_canvas'
+  time_canvas.style.width  = "300px"
+  time_canvas.style.height = "300px"
+
+  var myChart = new Chart(time_canvas, {
+    type : 'bar',
+    data : {
+      labels : results.map((r, i) => { return i+1 }),
+      datasets : [{
+        data  : results.map(result => { return result['time'] }),
+        backgroundColor : gen_colours(results.length)
+      }]
+    },
+    options : {
+      title : 'Runtime',
+      legend : { display : false },
+      scales : {
+        yAxes : [{
+          ticks : {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
+  }).render()
+
+  graph_section.appendChild(time_canvas)
+}
+
