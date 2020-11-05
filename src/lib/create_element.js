@@ -89,6 +89,12 @@ export function create_cell(type, innerHTML) {
   return cell
 }
 
+function create_h2(innerHTML) {
+  var h2       = document.createElement('h2')
+  h2.innerHTML = innerHTML
+  return h2
+}
+
 function gen_colours(num_results) {
   var colours = []
   for (var i=0; i < num_results; i++) {
@@ -99,34 +105,52 @@ function gen_colours(num_results) {
 
 export function create_graph(results) {
   var graph_section = document.querySelector('#results-graph')
+  Array.from(graph_section.children).forEach(child => { child.remove() })
 
-  var time_canvas          = (document.querySelector('#time_canvas')) ? document.querySelector('#time_canvas') : document.createElement('canvas')
-  time_canvas.id           = 'time_canvas'
-  time_canvas.style.width  = "300px"
-  time_canvas.style.height = "300px"
+  graph_section.appendChild(create_h2('Runtime'))
+  var time_canvas = document.createElement('canvas')
+  time_canvas.id  = 'time_canvas'
+  draw_graph(time_canvas, results, 'time').render()
 
-  var myChart = new Chart(time_canvas, {
+  graph_section.appendChild(time_canvas)
+}
+
+function draw_graph(ctx, data, key) {
+  return new Chart(ctx, {
     type : 'bar',
     data : {
-      labels : results.map((r, i) => { return i+1 }),
+      labels : data.map((r, i) => { return i+1 }),
       datasets : [{
-        data  : results.map(result => { return result['time'] }),
-        backgroundColor : gen_colours(results.length)
+        data  : data.map(result => { return result[key] }),
+        backgroundColor : gen_colours(data.length)
       }]
     },
     options : {
-      title : 'Runtime',
+      layout : {
+        padding : { 
+          top   : 20,
+          right : 20
+        }
+      },
       legend : { display : false },
       scales : {
+        xAxes : [{
+          scaleLabel : {
+            display : true,
+            labelString : 'Experiment'
+          }
+        }],
         yAxes : [{
+          scaleLabel : {
+            display : true,
+            labelString : 'Runtime'
+          },
           ticks : {
-            beginAtZero: true
+            beginAtZero : true
           }
         }]
       }
     }
-  }).render()
-
-  graph_section.appendChild(time_canvas)
+  })
 }
 
