@@ -106,26 +106,42 @@ function gen_colours(num_results) {
 
 export function create_graph(results) {
   var graph_section = document.querySelector('#results-graph')
+  var canvas, labels, data
   Array.from(graph_section.children).forEach(child => { child.remove() })
+  labels = results.map((r, i) => { return `Experiment ${i+1}` })
 
-  graph_section.appendChild(create_h2('Runtime'))
-  var time_canvas = document.createElement('canvas')
-  time_canvas.id  = 'time_canvas'
-  draw_graph(time_canvas, results, 'time').render()
+  //////////////////////////////////////////////////
 
-  graph_section.appendChild(time_canvas)
+  graph_section.appendChild(create_h2('Average Game Time'))
+  canvas    = document.createElement('canvas')
+  canvas.id = 'time-canvas'
+  data      = {
+    labels : labels,
+    datasets : [{
+      data            : results.map(result => { return result['time'] }),
+      backgroundColor : gen_colours(results.length)
+    }]
+  },
+  draw_graph(canvas, data, 'Experiment', 'Average Game Time').render()
+  graph_section.appendChild(canvas)
+
+  //////////////////////////////////////////////////
+
+  graph_section.appendChild(create_h2('Average Turn Times'))
+  canvas    = document.createElement('canvas')
+  canvas.id = 'turn-canvas'
+  data      = {
+    labels : labels,
+    datasets : get_turn_datasets(results)
+  }
+  draw_graph(canvas, data, 'Experiment', 'Average Turn Times').render()
+  graph_section.appendChild(canvas)
 }
 
-function draw_graph(ctx, data, key) {
+function draw_graph(ctx, data, xaxis_label, yaxis_label) {
   return new Chart(ctx, {
     type : 'bar',
-    data : {
-      labels : data.map((r, i) => { return i+1 }),
-      datasets : [{
-        data  : data.map(result => { return result[key] }),
-        backgroundColor : gen_colours(data.length)
-      }]
-    },
+    data : data,
     options : {
       layout : {
         padding : { 
@@ -138,13 +154,13 @@ function draw_graph(ctx, data, key) {
         xAxes : [{
           scaleLabel : {
             display : true,
-            labelString : 'Experiment'
+            labelString : xaxis_label
           }
         }],
         yAxes : [{
           scaleLabel : {
             display : true,
-            labelString : 'Runtime'
+            labelString : yaxis_label
           },
           ticks : {
             beginAtZero : true
@@ -155,3 +171,22 @@ function draw_graph(ctx, data, key) {
   })
 }
 
+function get_turn_datasets(results) {
+  var p1 = []
+  var p2 = []
+  results.forEach(result => { 
+    p1.push(result['p1-time'])
+    p2.push(result['p2-time'])
+  })
+
+  return [{
+      label           : 'Player1 Turn',
+      backgroundColor : 'red',
+      data            : p1
+    }, {
+      label           : 'Player2 Turn',
+      backgroundColor : 'blue',
+      data            : p2
+    }
+  ]
+}
