@@ -1,4 +1,4 @@
-import { create_label, create_input, create_select, create_button,create_table } from './lib/create_element.js'
+import { create_label, create_input, create_section, create_select, create_button, create_table } from './lib/create_element.js'
 
 (function() {
 
@@ -41,27 +41,28 @@ import { create_label, create_input, create_select, create_button,create_table }
 
   function get_form_data() {
     var experiments = []
-    var fieldsets   = Array.from(form.getElementsByTagName('fieldset'))
-    
-    var fieldsets_okay = fieldsets.every(fieldset => {
+
+    var fieldsets_okay = Array.from(form.getElementsByTagName('fieldset')).every(fieldset => {
       var experiment = {}
-      var inputs     = Array.from(fieldset.getElementsByTagName('input')).concat(Array.from(fieldset.getElementsByTagName('select')))
-      
-      var inputs_okay = inputs.every(input => {
-        if (input.value === '') { return false }
-        
-        experiment[[input.className]] = isNaN(input.value) ? input.value : Number(input.value)
 
-        if (input.className === 'height' || input.className === 'width') { 
-          if      (experiment[[input.className]] % 2 === 0) { return false }
-          else if (experiment[[input.className]] < 4)       { return false }
-        }
+      var sections_okay = Array.from(fieldset.getElementsByTagName('section')).every(section => {
+        var inputs = Array.from(section.getElementsByTagName('input')).concat(Array.from(section.getElementsByTagName('select')))
+    
+        var inputs_okay = inputs.every(input => {
+          if (input.value === '') { return false }
+          
+          experiment[[input.className]] = isNaN(input.value) ? input.value : Number(input.value)
 
-        return true
+          if (input.className === 'height' || input.className === 'width') { 
+            if      (experiment[[input.className]] % 2 === 0) { return false }
+            else if (experiment[[input.className]] < 4)       { return false }
+          }
+          return true
+        })
+        return inputs_okay
       })
-
       experiments.push(experiment)
-      return inputs_okay
+      return sections_okay
     })
 
     return fieldsets_okay ? experiments : null
@@ -70,32 +71,40 @@ import { create_label, create_input, create_select, create_button,create_table }
   function add_exp() {
     var new_exp = document.createElement('fieldset')
 
-    new_exp.appendChild(create_label('Height:', 'height'))
-    new_exp.appendChild(create_input('number', 'height'))
+    var section = create_section()
 
-    new_exp.appendChild(create_label('Width:', 'width'))
-    new_exp.appendChild(create_input('number', 'width'))
+    section.appendChild(create_label('Height:', 'height'))
+    section.appendChild(create_input('number', 'height'))
 
-    new_exp.appendChild(create_label('Games:', 'nofgames'))
-    new_exp.appendChild(create_input('number', 'nofgames'))
+    section.appendChild(create_label('Width:', 'width'))
+    section.appendChild(create_input('number', 'width'))
 
-    new_exp.appendChild(create_label('Player 1:', 'player1'))
+    section.appendChild(create_label('Games:', 'nofgames'))
+    section.appendChild(create_input('number', 'nofgames'))
+
+    new_exp.appendChild(section)
+
+    section = create_section()    
+    section.appendChild(create_label('Player 1:', 'player1'))
     var select = create_select('player1', [
       { 'innerHTML' : 'Random',    'value' : 'PlayerRandom' },
       { 'innerHTML' : 'Minimax',   'value' : 'PlayerMinimax' },
       { 'innerHTML' : 'Rlearning', 'value' : 'PlayerRL' }
     ])
     select.onchange = is_minimax
-    new_exp.appendChild(select)
+    section.appendChild(select)
+    new_exp.appendChild(section)
 
-    new_exp.appendChild(create_label('Player 2:', 'player2'))
+    section = create_section()
+    section.appendChild(create_label('Player 2:', 'player2'))
     select = create_select('player2', [
       { 'innerHTML' : 'Random',    'value' : 'PlayerRandom' },
       { 'innerHTML' : 'Minimax',   'value' : 'PlayerMinimax' },
       { 'innerHTML' : 'Rlearning', 'value' : 'PlayerRL' }
     ])
     select.onchange = is_minimax
-    new_exp.appendChild(select)
+    section.appendChild(select)
+    new_exp.appendChild(section)
 
     var button = create_button('Delete', 'button')
     button.onclick = del_exp
@@ -111,7 +120,7 @@ import { create_label, create_input, create_select, create_button,create_table }
   function is_minimax(e) {
     var node   = e.target
     var index  = Array.prototype.indexOf.call(node.parentNode.children, node)
-    var player = (index == 7) ? 'p1' : 'p2'
+    var player = node.parentNode.children[0].htmlFor.replace('layer', '')
 
     if (node.value === 'PlayerMinimax') {
       node.parentNode.insertBefore(create_select(`${player}-heuristic`, [

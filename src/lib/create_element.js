@@ -14,6 +14,11 @@ export function create_input(type, id) {
   return input
 }
 
+export function create_section() {
+  var section = document.createElement('section')
+  return section
+}
+
 export function create_select(id, options) {
   var select       = document.createElement('select')
   select.className = id
