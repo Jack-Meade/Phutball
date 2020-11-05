@@ -86,6 +86,7 @@ export function create_row(exp_num, results) {
 export function create_cell(type, innerHTML) {
   var cell       = document.createElement(type)
   cell.innerHTML = innerHTML
+  if (type === 'th') { cell.scope = 'col' }
   return cell
 }
 
