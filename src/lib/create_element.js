@@ -106,13 +106,16 @@ function gen_colours(num_results) {
 
 export function create_graph(results) {
   var graph_section = document.querySelector('#results-graph')
-  var canvas, labels, data
+  var section, canvas, labels, data
   Array.from(graph_section.children).forEach(child => { child.remove() })
   labels = results.map((r, i) => { return `Experiment ${i+1}` })
 
   //////////////////////////////////////////////////
 
-  graph_section.appendChild(create_h2('Average Game Time'))
+  section = create_section()
+  section.style.width  = '1000px'
+  section.style.height = '600px'
+  section.appendChild(create_h2('Average Game Time'))
   canvas    = document.createElement('canvas')
   canvas.id = 'time-canvas'
   data      = {
@@ -123,11 +126,15 @@ export function create_graph(results) {
     }]
   },
   draw_graph(canvas, data, 'Experiment', 'Average Game Time').render()
-  graph_section.appendChild(canvas)
+  section.appendChild(canvas)
+  graph_section.appendChild(section)
 
   //////////////////////////////////////////////////
 
-  graph_section.appendChild(create_h2('Average Turn Times'))
+  section = create_section()
+  section.style.width  = '1000px'
+  section.style.height = '600px'
+  section.appendChild(create_h2('Average Turn Times'))
   canvas    = document.createElement('canvas')
   canvas.id = 'turn-canvas'
   data      = {
@@ -135,7 +142,8 @@ export function create_graph(results) {
     datasets : get_turn_datasets(results)
   }
   draw_graph(canvas, data, 'Experiment', 'Average Turn Times').render()
-  graph_section.appendChild(canvas)
+  section.appendChild(canvas)
+  graph_section.appendChild(section)
 }
 
 function draw_graph(ctx, data, xaxis_label, yaxis_label) {
@@ -143,6 +151,8 @@ function draw_graph(ctx, data, xaxis_label, yaxis_label) {
     type : 'bar',
     data : data,
     options : {
+      responsive          : true,
+      maintainAspectRatio : false,
       layout : {
         padding : { 
           top   : 20,

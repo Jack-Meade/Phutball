@@ -46,6 +46,14 @@ th, td {
   background-color : #BBB;
 }
 
-#results section:not(#tab) {
+#results > section:not(#tab) {
   display : none;
+}
+
+#results-graph > section {
+  margin : auto;
+}
+
+#results-graph > section + section {
+  margin-top : 75px;
 }
