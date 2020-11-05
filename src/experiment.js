@@ -1,4 +1,4 @@
-import { create_label, create_input, create_section, create_select, create_button, create_table } from './lib/create_element.js'
+import { create_label, create_input, create_section, create_select, create_button, create_table, create_graph } from './lib/create_element.js'
 
 (function() {
 
@@ -31,8 +31,8 @@ import { create_label, create_input, create_section, create_select, create_butto
       } else {
         var response = JSON.parse(xhr.response)
         create_table(response.results)
-        // create_graph(response.results)
-        document.querySelector(".tab-buttons").click()
+        create_graph(response.results)
+        document.querySelectorAll(".tab-buttons")[1].click()
       }
     } catch(err) {
       alert(`${err}\n${xhr.response}`)
