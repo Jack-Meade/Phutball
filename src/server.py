@@ -172,35 +172,47 @@ class PhutballServer(TCPServer):
                 "p1-type"      : experiment["player1"].replace("Player", ""),
                 "p1-depth"     : experiment["p1-depth"]             if "p1-depth"     in experiment else None,
                 "p1-heuristic" : experiment["p1-heuristic"].title() if "p1-heuristic" in experiment else None,
+                "p1-time"      : 0,
                 "p2-type"      : experiment["player2"].replace("Player", ""),
                 "p2-depth"     : experiment["p2-depth"]             if "p2-depth"     in experiment else None,
-                "p2-heuristic" : experiment["p2-heuristic"].title() if "p2-heuristic" in experiment else None
+                "p2-heuristic" : experiment["p2-heuristic"].title() if "p2-heuristic" in experiment else None,
+                "p2-time"      : 0
             })
 
-            start_time = time()
+            turns = 0
+            game_time = time()
             while games_left:
                 player    = ai_types[experiment["player1"]] if self._p1_turn else ai_types[experiment["player2"]]
                 depth     = self._determine_params(experiment, "p1-depth"     if self._p1_turn else "p2-depth")
                 heuristic = self._determine_params(experiment, "p1-heuristic" if self._p1_turn else "p2-heuristic")
 
-                result = self._ai_turn_exp(board, player, self._p1_turn, depth, heuristic)
+                turn_time  = time()
+                result     = self._ai_turn_exp(board, player, self._p1_turn, depth, heuristic)
+                end_time   = time() - turn_time
+                turns     += 1
+
+                if self._p1_turn: self._results[i]["p1-time"] += end_time
+                else:             self._results[i]["p2-time"] += end_time
 
                 if isinstance(result, Board):
                     self._p1_turn = not self._p1_turn
                     board         = result
 
                 else:
-                    self._results[i]["time"] += time() - start_time
+                    end_time                  = time() - game_time
+                    self._results[i]["time"] += end_time
                     self._results[i][result] += 1
 
-                    self._p1_turn = True          
+                    self._p1_turn  = True          
+                    games_left    -= 1
                     board.reset_board()
                     ai_types["PlayerMinimax"] = PlayerMinimax(board)
-                    games_left -= 1
                     
-                    start_time = time()
+                    game_time = time()
 
-            self.results[i]["time"] = round(self.results[i]["time"] / experiment["nofgames"], 6)
+            self._results[i]["time"]    = round(self.results[i]["time"] / experiment["nofgames"], 6)
+            self._results[i]["p1-time"] = round(self._results[i]["p1-time"] / turns, 6)
+            self._results[i]["p2-time"] = round(self._results[i]["p2-time"] / (turns if turns % 2 == 0 else turns-1), 6)
 
     def _ai_turn_exp(self, board, player, player1, depth, heuristic):
         new_board = player.take_turn(board, player1, depth, heuristic)
