@@ -1,4 +1,4 @@
-import * as ce from './lib/create_element.js'
+import { create_label, create_input, create_select, create_button,create_table } from './lib/create_element.js'
 
 (function() {
 
@@ -30,8 +30,8 @@ import * as ce from './lib/create_element.js'
         console.log(`Error ${xhr.status}: ${xhr.statusText}`)
       } else {
         var response = JSON.parse(xhr.response)
-        ce.create_table(response.results)
-        // ce.create_graph(response.results)
+        create_table(response.results)
+        // create_graph(response.results)
         document.querySelector(".tab-buttons").click()
       }
     } catch(err) {
@@ -70,17 +70,17 @@ import * as ce from './lib/create_element.js'
   function add_exp() {
     var new_exp = document.createElement('fieldset')
 
-    new_exp.appendChild(ce.create_label('Height:', 'height'))
-    new_exp.appendChild(ce.create_input('number', 'height'))
+    new_exp.appendChild(create_label('Height:', 'height'))
+    new_exp.appendChild(create_input('number', 'height'))
 
-    new_exp.appendChild(ce.create_label('Width:', 'width'))
-    new_exp.appendChild(ce.create_input('number', 'width'))
+    new_exp.appendChild(create_label('Width:', 'width'))
+    new_exp.appendChild(create_input('number', 'width'))
 
-    new_exp.appendChild(ce.create_label('Games:', 'nofgames'))
-    new_exp.appendChild(ce.create_input('number', 'nofgames'))
+    new_exp.appendChild(create_label('Games:', 'nofgames'))
+    new_exp.appendChild(create_input('number', 'nofgames'))
 
-    new_exp.appendChild(ce.create_label('Player 1:', 'player1'))
-    var select = ce.create_select('player1', [
+    new_exp.appendChild(create_label('Player 1:', 'player1'))
+    var select = create_select('player1', [
       { 'innerHTML' : 'Random',    'value' : 'PlayerRandom' },
       { 'innerHTML' : 'Minimax',   'value' : 'PlayerMinimax' },
       { 'innerHTML' : 'Rlearning', 'value' : 'PlayerRL' }
@@ -88,8 +88,8 @@ import * as ce from './lib/create_element.js'
     select.onchange = is_minimax
     new_exp.appendChild(select)
 
-    new_exp.appendChild(ce.create_label('Player 2:', 'player2'))
-    select = ce.create_select('player2', [
+    new_exp.appendChild(create_label('Player 2:', 'player2'))
+    select = create_select('player2', [
       { 'innerHTML' : 'Random',    'value' : 'PlayerRandom' },
       { 'innerHTML' : 'Minimax',   'value' : 'PlayerMinimax' },
       { 'innerHTML' : 'Rlearning', 'value' : 'PlayerRL' }
@@ -97,7 +97,7 @@ import * as ce from './lib/create_element.js'
     select.onchange = is_minimax
     new_exp.appendChild(select)
 
-    var button = ce.create_button('Delete', 'button')
+    var button = create_button('Delete', 'button')
     button.onclick = del_exp
     new_exp.appendChild(button)
 
@@ -114,14 +114,14 @@ import * as ce from './lib/create_element.js'
     var player = (index == 7) ? 'p1' : 'p2'
 
     if (node.value === 'PlayerMinimax') {
-      node.parentNode.insertBefore(ce.create_select(`${player}-heuristic`, [
+      node.parentNode.insertBefore(create_select(`${player}-heuristic`, [
         { 'innerHTML' : 'Heuristic1',    'value' : 'heuristic1' },
         { 'innerHTML' : 'Heuristic2',    'value' : 'heuristic2' },
         { 'innerHTML' : 'Heuristic3',    'value' : 'heuristic3' },
       ]), node.parentNode.children[index+1])
-      node.parentNode.insertBefore(ce.create_label(`${player.toUpperCase()} Heuristic:`, `${player}-heuristic`), node.parentNode.children[index+1])
-      node.parentNode.insertBefore(ce.create_input('number', `${player}-depth`), node.parentNode.children[index+1])
-      node.parentNode.insertBefore(ce.create_label(`${player.toUpperCase()} Depth:`, `${player}-depth`), node.parentNode.children[index+1])
+      node.parentNode.insertBefore(create_label(`${player.toUpperCase()} Heuristic:`, `${player}-heuristic`), node.parentNode.children[index+1])
+      node.parentNode.insertBefore(create_input('number', `${player}-depth`), node.parentNode.children[index+1])
+      node.parentNode.insertBefore(create_label(`${player.toUpperCase()} Depth:`, `${player}-depth`), node.parentNode.children[index+1])
       node.mini_options_added = true
 
     } else if (node.mini_options_added) {
