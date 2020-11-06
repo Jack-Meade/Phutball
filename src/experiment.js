@@ -1,4 +1,4 @@
-import { create_label, create_input, create_section, create_select, create_button, create_table, create_graph } from './lib/create_element.js'
+import { create_element, create_table, create_graph } from './lib/create_element.js'
 
 (function() {
 
@@ -69,44 +69,44 @@ import { create_label, create_input, create_section, create_select, create_butto
   }
 
   function add_exp() {
-    var new_exp = document.createElement('fieldset')
+    var new_exp = create_element({ elm : 'fieldset' })
 
-    var section = create_section()
+    var section = create_element({ elm : 'section' })
 
-    section.appendChild(create_label('Height:', 'height'))
-    section.appendChild(create_input('number', 'height'))
+    section.appendChild(create_element({ elm : 'label', innerHTML : 'Height:', htmlFor : 'height' }))
+    section.appendChild(create_element({ elm : 'input', type : 'number', class_name : 'height' }))
 
-    section.appendChild(create_label('Width:', 'width'))
-    section.appendChild(create_input('number', 'width'))
+    section.appendChild(create_element({ elm : 'label', innerHTML : 'Width:', htmlFor : 'width' }))
+    section.appendChild(create_element({ elm : 'input', type : 'number', class_name : 'width' }))
 
-    section.appendChild(create_label('Games:', 'nofgames'))
-    section.appendChild(create_input('number', 'nofgames'))
+    section.appendChild(create_element({ elm : 'label', innerHTML : 'Games:', htmlFor : 'nofgames' }))
+    section.appendChild(create_element({ elm : 'input', type : 'number', class_name : 'nofgames' }))
 
     new_exp.appendChild(section)
 
-    section = create_section()    
-    section.appendChild(create_label('Player 1:', 'player1'))
-    var select = create_select('player1', [
-      { 'innerHTML' : 'Random',    'value' : 'PlayerRandom' },
-      { 'innerHTML' : 'Minimax',   'value' : 'PlayerMinimax' },
-      { 'innerHTML' : 'Rlearning', 'value' : 'PlayerRL' }
-    ])
+    section = create_element({ elm : 'section' })  
+    section.appendChild(create_element({ elm : 'label', innerHTML : 'Player 1:', htmlFor : 'player1'}))
+    var select = create_element({ elm : 'select', class_name : 'player1', options : [
+      { innerHTML : 'Random',    value : 'PlayerRandom' },
+      { innerHTML : 'Minimax',   value : 'PlayerMinimax' },
+      { innerHTML : 'Rlearning', value : 'PlayerRL' }
+    ]})
     select.onchange = is_minimax
     section.appendChild(select)
     new_exp.appendChild(section)
 
-    section = create_section()
-    section.appendChild(create_label('Player 2:', 'player2'))
-    select = create_select('player2', [
-      { 'innerHTML' : 'Random',    'value' : 'PlayerRandom' },
-      { 'innerHTML' : 'Minimax',   'value' : 'PlayerMinimax' },
-      { 'innerHTML' : 'Rlearning', 'value' : 'PlayerRL' }
-    ])
+    section = create_element({ elm : 'section' })
+    section.appendChild(create_element({ elm : 'label', innerHTML : 'Player 2:', htmlFor : 'player2'}))
+    select = create_element({ elm : 'select', class_name : 'player2', options : [
+      { innerHTML : 'Random',    value : 'PlayerRandom' },
+      { innerHTML : 'Minimax',   value : 'PlayerMinimax' },
+      { innerHTML : 'Rlearning', value : 'PlayerRL' }
+    ]})
     select.onchange = is_minimax
     section.appendChild(select)
     new_exp.appendChild(section)
 
-    var button = create_button('Delete', 'button')
+    var button = create_element({ elm : 'button', innerHTML : 'Delete', type : 'button'})
     button.onclick = del_exp
     new_exp.appendChild(button)
 
@@ -123,14 +123,14 @@ import { create_label, create_input, create_section, create_select, create_butto
     var player = node.parentNode.children[0].htmlFor.replace('layer', '')
 
     if (node.value === 'PlayerMinimax') {
-      node.parentNode.insertBefore(create_select(`${player}-heuristic`, [
-        { 'innerHTML' : 'Heuristic1',    'value' : 'heuristic1' },
-        { 'innerHTML' : 'Heuristic2',    'value' : 'heuristic2' },
-        { 'innerHTML' : 'Heuristic3',    'value' : 'heuristic3' },
-      ]), node.parentNode.children[index+1])
-      node.parentNode.insertBefore(create_label(`${player.toUpperCase()} Heuristic:`, `${player}-heuristic`), node.parentNode.children[index+1])
-      node.parentNode.insertBefore(create_input('number', `${player}-depth`), node.parentNode.children[index+1])
-      node.parentNode.insertBefore(create_label(`${player.toUpperCase()} Depth:`, `${player}-depth`), node.parentNode.children[index+1])
+      node.parentNode.insertBefore(create_element({ elm : 'select', class_name : `${player}-heuristic`,  options : [
+        { innerHTML : 'Heuristic1', value : 'heuristic1' },
+        { innerHTML : 'Heuristic2', value : 'heuristic2' },
+        { innerHTML : 'Heuristic3', value : 'heuristic3' },
+      ]}), node.parentNode.children[index+1])
+      node.parentNode.insertBefore(create_element({ elm : 'label', innerHTML : `${player.toUpperCase()} Heuristic:`, htmlFor : `${player}-heuristic` }), node.parentNode.children[index+1])
+      node.parentNode.insertBefore(create_element({ elm : 'input', type : 'number', class_name : `${player}-depth` }), node.parentNode.children[index+1])
+      node.parentNode.insertBefore(create_element({ elm : 'label', innerHTML : `${player.toUpperCase()} Depth:`, htmlFor : `${player}-depth` }), node.parentNode.children[index+1])
       node.mini_options_added = true
 
     } else if (node.mini_options_added) {

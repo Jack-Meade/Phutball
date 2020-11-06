@@ -1,32 +1,29 @@
-export function create_label(innerHTML, htmlFor) {
-  var label       = document.createElement('label')
-  label.htmlFor   = htmlFor
-  label.innerHTML = innerHTML
-  return label
+function required(name) {
+  throw new Error(`missing required parameter: ${name}`)
 }
 
-export function create_input(type, id) {
-  var input       = document.createElement('input')
-  input.type      = type
-  input.className = id
-  input.name      = id
-  input.required  = true
-  return input
-}
+export function create_element({ elm=required('elm'),htmlFor=null,innerHTML=null,id=null,class_name=null,name=null,width=null,height=null,options=null,type=null } = {}) {
+  var element = document.createElement(elm)
+  if (class_name != null) { element.className    = class_name }
+  if (id != null)         { element.id           = id }
+  if (name != null)       { element.name         = name }
+  if (innerHTML != null)  { element.innerHTML    = innerHTML }
+  if (htmlFor != null)    { element.htmlFor      = htmlFor }
+  if (width != null)      { element.style.width  = width }
+  if (height != null)     { element.style.height = height }
 
-export function create_section() {
-  var section = document.createElement('section')
-  return section
-}
+  if (elm === 'input') { 
+    element.type     = type
+    element.required = true
+  } else if (elm === 'select') {
+    options.forEach(option => {
+      element.appendChild(create_option(option.innerHTML, option.value))
+    })
+  } else if (elm === 'th') {
+    element.scope = 'col'
+  }
 
-export function create_select(id, options) {
-  var select       = document.createElement('select')
-  select.className = id
-  select.name      = id
-  options.forEach(option => {
-    select.appendChild(create_option(option.innerHTML, option.value))
-  })
-  return select
+  return element
 }
 
 function create_option(innerHTML, value) {
@@ -35,14 +32,6 @@ function create_option(innerHTML, value) {
   option.value     = value
   return option
 }
-
-export function create_button(innerHTML, type) {
-  var button       = document.createElement('button')
-  button.innerHTML = innerHTML
-  button.type      = type
-  return button
-}
-
 
 export function create_table(results) {
   var section = document.querySelector('#results-table')
@@ -54,46 +43,33 @@ export function create_table(results) {
   table.appendChild(create_table_headers(results))
   
   for (var i = 0; i < results.length; i++) {
-    table.appendChild(create_row(i, results[i]))
+    table.appendChild(create_row(i+1, results[i]))
   }
   
   section.appendChild(table)
 }
 
-export function create_table_headers(results) {
+function create_table_headers(results) {
   var row = document.createElement('tr')
-  row.appendChild(create_cell('th', '#'))
+  row.appendChild(create_element({ elm : 'th', innerHTML : '#' }))
 
   for (var key in results[0]) {
-    row.appendChild(create_cell('th', key.toUpperCase()))
+    row.appendChild(create_element({ elm : 'th', innerHTML : key.toUpperCase() }))
   }
 
   return row
 }
 
-export function create_row(exp_num, results) {
+function create_row(exp_num, results) {
   var row = document.createElement('tr')
   
-  row.appendChild(create_cell('td', exp_num))
+  row.appendChild(create_element({ elm : 'td', innerHTML : exp_num }))
   
   for (var key in results) {
-    row.appendChild(create_cell('td', results[key]))
+    row.appendChild(create_element({ elm : 'td', innerHTML : results[key] }))
   }
 
   return row
-}
-
-export function create_cell(type, innerHTML) {
-  var cell       = document.createElement(type)
-  cell.innerHTML = innerHTML
-  if (type === 'th') { cell.scope = 'col' }
-  return cell
-}
-
-function create_h2(innerHTML) {
-  var h2       = document.createElement('h2')
-  h2.innerHTML = innerHTML
-  return h2
 }
 
 function gen_colours(num_results) {
@@ -112,12 +88,9 @@ export function create_graph(results) {
 
   //////////////////////////////////////////////////
 
-  section = create_section()
-  section.style.width  = '1000px'
-  section.style.height = '600px'
-  section.appendChild(create_h2('Average Game Time'))
-  canvas    = document.createElement('canvas')
-  canvas.id = 'time-canvas'
+  section   = create_element({ elm : 'section', width : '1000px', height : '600px' })
+  section.appendChild(create_element({ elm : 'h2', innerHTML : 'Average Game Time'}))
+  canvas    = create_element({ elm : 'canvas', id : 'time-canvas' })
   data      = {
     labels : labels,
     datasets : [{
@@ -131,12 +104,9 @@ export function create_graph(results) {
 
   //////////////////////////////////////////////////
 
-  section = create_section()
-  section.style.width  = '1000px'
-  section.style.height = '600px'
-  section.appendChild(create_h2('Average Turn Times'))
-  canvas    = document.createElement('canvas')
-  canvas.id = 'turn-canvas'
+  section   = create_element({ elm : 'section', width : '1000px', height : '600px' })
+  section.appendChild(create_element({ elm : 'h2', innerHTML : 'Average Turn Times'}))
+  canvas    = create_element({ elm : 'canvas', id : 'turn-canvas' })
   data      = {
     labels : labels,
     datasets : get_turn_datasets(results)
