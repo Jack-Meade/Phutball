@@ -1,5 +1,9 @@
 body {
-  text-align : center;
+  text-align  : center;
+}
+
+body, button, select, input {
+  font-family : courier, monospace, helvetica, arial, sans-serif;
 }
 
 canvas {
@@ -8,6 +12,14 @@ canvas {
 
 span {
   display : block;
+}
+
+fieldset > section {
+  margin : 0.5em auto;
+}
+
+fieldset section > label ~ label {
+  margin-left : 0.5em;
 }
 
 input[type="number"] {
