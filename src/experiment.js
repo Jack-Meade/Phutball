@@ -56,6 +56,9 @@ import { create_element, create_table, create_graph } from './lib/create_element
           if (input.className === 'height' || input.className === 'width') { 
             if      (experiment[[input.className]] % 2 === 0) { return false }
             else if (experiment[[input.className]] < 4)       { return false }
+
+          } else if (input.className === 'nofgames' || input.className.includes('depth')) {
+            if      (experiment[[input.className]] < 1)       { return false }
           }
           return true
         })
