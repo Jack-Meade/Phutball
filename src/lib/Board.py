@@ -128,3 +128,56 @@ class Board(object):
 
         return board, ball
 
+    def get_successes(self):
+        boards  = self._kick_ball()
+        boards += self._place_players()
+        
+        return boards
+
+    def _place_players(self):
+        boards = []
+        # for every cell, place player where applicable (not on player|ball) on a new_board
+        for y in range(1, len(self._board)-1):
+            for x in range(1, len(self._board[y])-1):
+                new_board = deepcopy(self)
+
+                if not new_board.is_player(x, y) and not new_board.is_ball(x, y):
+                    new_board.update(x, y, "player")
+                    boards.append(new_board)
+        return boards
+
+    def _kick_ball(self):
+        steps = [
+            { "x" : -1, "y" : -1 },
+            { "x" :  0, "y" : -1 },
+            { "x" :  1, "y" : -1 },
+            { "x" : -1, "y" :  0 },
+            { "x" :  1, "y" :  0 },
+            { "x" : -1, "y" :  1 },
+            { "x" :  0, "y" :  1 },
+            { "x" :  1, "y" :  1 }
+        ]
+        boards = []
+
+        # for each cell next to ball, determine if you can kick in a line
+        for step in steps:
+            players = []
+            curX    = self._ball["x"] + step["x"]
+            curY    = self._ball["y"] + step["y"]
+
+            # while there is a player along the line
+            while self.is_player(curX, curY):
+                players.append({ "x" : curX, "y" : curY })
+                curX += step["x"]
+                curY += step["y"]
+
+            # if line ends on a wall, skip
+            if self.is_wall(curX, curY): continue
+
+            # if players were found, append board and update new_board ball coords
+            if len(players):
+                new_board = deepcopy(self)
+                new_board.remove_players(players)
+                new_board.update(curX, curY, "ball", { "x" : curX, "y" : curY })
+                boards.append(new_board)
+        return boards

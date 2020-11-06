@@ -31,7 +31,7 @@ class PlayerMinimax(Player):
                 if child.board == board: return child
         
         else: # Only the very first move will have no children, generate them if this is the case
-            self._root.children = [Node(cboard) for cboard in Player.get_successes(self._root.board)]
+            self._root.children = [Node(cboard) for cboard in self._root.board.get_successes()]
             return self._find_child(board)
 
     @staticmethod
@@ -41,7 +41,7 @@ class PlayerMinimax(Player):
 
         else:
             highlow       = float('-inf') if player1            else float('inf')
-            node.children = node.children if len(node.children) else [Node(cboard) for cboard in Player.get_successes(node.board)]
+            node.children = node.children if len(node.children) else [Node(cboard) for cboard in node.board.get_successes()]
 
             for child in node.children:
                 child.value = PlayerMinimax._minimax(child, depth-1, alpha, beta, not player1, heuristic)
