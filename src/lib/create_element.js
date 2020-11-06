@@ -98,7 +98,7 @@ export function create_graph(results) {
       backgroundColor : gen_colours(results.length)
     }]
   },
-  draw_graph(canvas, data, 'Experiment', 'Average Game Time').render()
+  draw_graph(canvas, data, 'Experiment', 'Average Game Time (seconds)').render()
   section.appendChild(canvas)
   graph_section.appendChild(section)
 
@@ -109,9 +109,22 @@ export function create_graph(results) {
   canvas    = create_element({ elm : 'canvas', id : 'turn-canvas' })
   data      = {
     labels : labels,
-    datasets : get_turn_datasets(results)
+    datasets : get_player_datasets(results, { p1 : 'p1-time', p2 : 'p2-time' })
   }
-  draw_graph(canvas, data, 'Experiment', 'Average Turn Times').render()
+  draw_graph(canvas, data, 'Experiment', 'Average Turn Times (seconds)').render()
+  section.appendChild(canvas)
+  graph_section.appendChild(section)
+
+  //////////////////////////////////////////////////
+
+  section   = create_element({ elm : 'section', width : '1000px', height : '600px' })
+  section.appendChild(create_element({ elm : 'h2', innerHTML : 'Player Scores'}))
+  canvas    = create_element({ elm : 'canvas', id : 'scores-canvas' })
+  data      = {
+    labels : labels,
+    datasets : get_player_datasets(results, { p1 : 'player1', p2 : 'player2' })
+  }
+  draw_graph(canvas, data, 'Experiment', 'Score').render()
   section.appendChild(canvas)
   graph_section.appendChild(section)
 }
@@ -151,20 +164,20 @@ function draw_graph(ctx, data, xaxis_label, yaxis_label) {
   })
 }
 
-function get_turn_datasets(results) {
+function get_player_datasets(results, keys) {
   var p1 = []
   var p2 = []
   results.forEach(result => { 
-    p1.push(result['p1-time'])
-    p2.push(result['p2-time'])
+    p1.push(result[keys.p1])
+    p2.push(result[keys.p2])
   })
 
   return [{
-      label           : 'Player1 Turn',
+      label           : `Player1 ${ (keys.p1 === 'player1') ? 'score' : keys.p1.replace('p1-','')}`,
       backgroundColor : 'red',
       data            : p1
     }, {
-      label           : 'Player2 Turn',
+      label           : `Player2 ${ (keys.p2 === 'player2') ? 'score' : keys.p2.replace('p2-','')}`,
       backgroundColor : 'blue',
       data            : p2
     }
