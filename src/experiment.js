@@ -15,6 +15,7 @@ import { create_element, create_table, create_graph } from './lib/create_element
   function send_request() {
     var xhr = new XMLHttpRequest()
     xhr.open('POST', '', false)
+    xhr.ontimeout = () => { console.log('timed out :(') }
 
     var experiments = get_form_data()
 
