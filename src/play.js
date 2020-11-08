@@ -135,10 +135,14 @@
 
   function setup_listeners() {
     document.getElementById("but_player").addEventListener('click', function() {
-      if (!kicking_ball)   { placing_player = !placing_player; update_status(); }
+      kicking_ball   = false
+      placing_player = !placing_player
+      update_status()
     }, false);
     document.getElementById("but_kick").addEventListener('click', function() {
-      if (!placing_player) { kicking_ball = !kicking_ball; update_status(); }
+      placing_player = false
+      kicking_ball   = !kicking_ball
+      update_status()
     }, false);
 
     canvas.addEventListener('click', function (e) {
