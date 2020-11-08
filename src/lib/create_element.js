@@ -174,11 +174,11 @@ function get_player_datasets(results, keys) {
 
   return [{
       label           : `Player1 ${ (keys.p1 === 'player1') ? 'score' : keys.p1.replace('p1-','')}`,
-      backgroundColor : 'red',
+      backgroundColor : 'blue',
       data            : p1
     }, {
       label           : `Player2 ${ (keys.p2 === 'player2') ? 'score' : keys.p2.replace('p2-','')}`,
-      backgroundColor : 'blue',
+      backgroundColor : 'red',
       data            : p2
     }
   ]
