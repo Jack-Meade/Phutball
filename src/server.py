@@ -152,7 +152,9 @@ class PhutballServer(TCPServer):
 
     def run_ai(self, params):
         self._results = []
+        num_e = len(str(len(params)))
         for i, experiment in enumerate(params):
+            num_g      = len(str(experiment["nofgames"]))
             board      = Board(experiment["height"], experiment["width"])
             games_left = experiment["nofgames"]
 
@@ -207,7 +209,9 @@ class PhutballServer(TCPServer):
                     games_left    -= 1
                     board.reset_board()
                     ai_types["PlayerMinimax"] = PlayerMinimax(board)
-                    
+                    print("Experiment {0:{num_e}}: {1:{num_g}}/{2:{num_g}}".format(
+                        i+1, (experiment["nofgames"]-games_left), experiment["nofgames"], num_e=num_e, num_g=num_g)
+                    )
                     game_time = time()
 
             self._results[i]["time"]    = round(self.results[i]["time"] / experiment["nofgames"], 6)
