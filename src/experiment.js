@@ -53,13 +53,16 @@ import { create_element, create_table, create_graph } from './lib/create_element
           if (input.value === '') { return false }
           
           experiment[[input.className]] = isNaN(input.value) ? input.value : Number(input.value)
-
+          
           if (input.className === 'height' || input.className === 'width') { 
             if      (experiment[[input.className]] % 2 === 0) { return false }
             else if (experiment[[input.className]] < 4)       { return false }
 
           } else if (input.className === 'nofgames' || input.className.includes('depth')) {
             if      (experiment[[input.className]] < 1)       { return false }
+
+          } else if (input.className.includes('abp')) {
+            experiment[[input.className]] = input.checked
           }
           return true
         })
@@ -127,6 +130,8 @@ import { create_element, create_table, create_graph } from './lib/create_element
     var player = node.parentNode.children[0].htmlFor.replace('layer', '')
 
     if (node.value === 'PlayerMinimax') {
+      node.parentNode.insertBefore(create_element({ elm : 'input', type : 'checkbox', class_name : `${player}-abp`, value : `${player}-abp`, rinput : false }), node.parentNode.children[index+1])
+      node.parentNode.insertBefore(create_element({ elm : 'label', innerHTML : `${player.toUpperCase()} AB-P:`, htmlFor : `${player}-abp` }), node.parentNode.children[index+1])
       node.parentNode.insertBefore(create_element({ elm : 'select', class_name : `${player}-heuristic`,  options : [
         { innerHTML : 'Heuristic1', value : 'heuristic1' },
         { innerHTML : 'Heuristic2', value : 'heuristic2' },
@@ -138,6 +143,8 @@ import { create_element, create_table, create_graph } from './lib/create_element
       node.mini_options_added = true
 
     } else if (node.mini_options_added) {
+      node.parentNode.children[index+1].remove()
+      node.parentNode.children[index+1].remove()
       node.parentNode.children[index+1].remove()
       node.parentNode.children[index+1].remove()
       node.parentNode.children[index+1].remove()

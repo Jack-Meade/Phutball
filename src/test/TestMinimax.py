@@ -27,7 +27,7 @@ class TestMinimax(TestCase):
         root._root.children[2].children[0].value = 9
         root._root.children[2].children[1].value = 4
 
-        root.take_turn(Board(5,5), True, 2, 'heuristic1')
+        root.take_turn(Board(5,5), True, 2, 'heuristic1', True)
         self.assertEqual(root._root.value, 5, "test_minimax_tree1: Root value is not 5")
 
     def test_minimax_tree2(self):
@@ -59,7 +59,7 @@ class TestMinimax(TestCase):
         root._root.children[2].children[1].children[0].value = -8
         root._root.children[2].children[1].children[1].value = -3
 
-        root.take_turn(Board(5,5), True, 3, 'heuristic1')
+        root.take_turn(Board(5,5), True, 3, 'heuristic1', True)
         self.assertEqual(root._root.value, 4, "test_minimax_tree2: Root value is not 4")
 
     def test_minimax_tree3(self):
@@ -108,7 +108,7 @@ class TestMinimax(TestCase):
         root._root.children[1].children[1].children[1].children[1].value = 7
         root._root.children[1].children[1].children[1].children[2].value = 9
 
-        root.take_turn(Board(5,5), True, 4, 'heuristic1')
+        root.take_turn(Board(5,5), True, 4, 'heuristic1', True)
         self.assertEqual(root._root.value, 3, "test_minimax_tree3: Root value is not 3")
 
 if __name__ == "__main__":

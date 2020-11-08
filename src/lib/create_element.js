@@ -2,7 +2,7 @@ function required(name) {
   throw new Error(`missing required parameter: ${name}`)
 }
 
-export function create_element({ elm=required('elm'),htmlFor=null,innerHTML=null,id=null,class_name=null,name=null,width=null,height=null,options=null,type=null } = {}) {
+export function create_element({ elm=required('elm'),htmlFor=null,innerHTML=null,id=null,class_name=null,name=null,width=null,height=null,options=null,type=null,rinput=true } = {}) {
   var element = document.createElement(elm)
   if (class_name != null) { element.className    = class_name }
   if (id != null)         { element.id           = id }
@@ -14,7 +14,7 @@ export function create_element({ elm=required('elm'),htmlFor=null,innerHTML=null
 
   if (elm === 'input') { 
     element.type     = type
-    element.required = true
+    element.required = rinput
   } else if (elm === 'select') {
     options.forEach(option => {
       element.appendChild(create_option(option.innerHTML, option.value))

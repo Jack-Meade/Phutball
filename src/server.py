@@ -174,10 +174,12 @@ class PhutballServer(TCPServer):
                 "p1-type"      : experiment["player1"].replace("Player", ""),
                 "p1-depth"     : experiment["p1-depth"]             if "p1-depth"     in experiment else None,
                 "p1-heuristic" : experiment["p1-heuristic"].title() if "p1-heuristic" in experiment else None,
+                "p1-abp"       : experiment["p1-abp"]               if "p1-abp"       in experiment else None,
                 "p1-time"      : 0,
                 "p2-type"      : experiment["player2"].replace("Player", ""),
                 "p2-depth"     : experiment["p2-depth"]             if "p2-depth"     in experiment else None,
                 "p2-heuristic" : experiment["p2-heuristic"].title() if "p2-heuristic" in experiment else None,
+                "p2-abp"       : experiment["p2-abp"]               if "p2-abp"       in experiment else None,
                 "p2-time"      : 0
             })
 
@@ -187,9 +189,10 @@ class PhutballServer(TCPServer):
                 player    = ai_types[experiment["player1"]] if self._p1_turn else ai_types[experiment["player2"]]
                 depth     = self._determine_params(experiment, "p1-depth"     if self._p1_turn else "p2-depth")
                 heuristic = self._determine_params(experiment, "p1-heuristic" if self._p1_turn else "p2-heuristic")
+                abp       = self._determine_params(experiment, "p1-abp"       if self._p1_turn else "p2-abp")
 
                 turn_time  = time()
-                result     = self._ai_turn_exp(board, player, self._p1_turn, depth, heuristic)
+                result     = self._ai_turn_exp(board, player, self._p1_turn, depth, heuristic, abp)
                 end_time   = time() - turn_time
                 turns     += 1
 
@@ -218,8 +221,8 @@ class PhutballServer(TCPServer):
             self._results[i]["p1-time"] = round(self._results[i]["p1-time"] / turns, 6)
             self._results[i]["p2-time"] = round(self._results[i]["p2-time"] / (turns if turns % 2 == 0 else turns-1), 6)
 
-    def _ai_turn_exp(self, board, player, player1, depth, heuristic):
-        new_board = player.take_turn(board, player1, depth, heuristic)
+    def _ai_turn_exp(self, board, player, player1, depth, heuristic, abp):
+        new_board = player.take_turn(board, player1, depth, heuristic, abp)
 
         if   new_board.ball["y"] <= 1:            self._p2_score += 1; return "player2"
         elif new_board.ball["y"] >= len(board)-2: self._p1_score += 1; return "player1"
