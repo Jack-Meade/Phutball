@@ -1,5 +1,5 @@
-from test.TestPlayer  import TestPlayer
+# from test.TestPlayer  import TestPlayer
 from test.TestMinimax import TestMinimax
 
-TestPlayer().main()
+# TestPlayer().main()
 TestMinimax().main()
