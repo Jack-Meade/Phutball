@@ -128,7 +128,7 @@ class Board(object):
 
         return board, ball
 
-    def get_successes(self):
+    def get_successors(self):
         boards  = self._kick_ball()
         boards += self._place_players()
         

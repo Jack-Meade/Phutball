@@ -237,7 +237,7 @@ class TestPlayer(TestCase):
             }
         ]
 
-        self.assertEqual(Player.get_successes(test_board), expected_result, "Player.get_successes() Invalid")
+        self.assertEqual(Player.get_successors(test_board), expected_result, "Player.get_successors() Invalid")
 
 if __name__ == '__main__':
     main()
