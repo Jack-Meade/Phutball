@@ -98,7 +98,7 @@ class PhutballServer(TCPServer):
         ##################################################
         if kicking:
             if self._board.is_wall(x, y): 
-                self._error_msg = "You cannot put the ball offside, or kick it inplace!"
+                self._error_msg = "You cannot put the ball offside, or kick it in-place!"
 
             elif self._board.is_goal(y):
                 if self._board.kick_ball(x, y):
@@ -142,7 +142,7 @@ class PhutballServer(TCPServer):
 
     def _ai_turn(self, ai_type, player1):
         player    = self._ai[ai_type]
-        new_board = player.take_turn(self._board, player1, 3, "heuristic1")
+        new_board = player.take_turn(self._board, player1, 3, "heuristic1", True)
 
         if   new_board.ball["y"] <= 1:                  self._p2_score += 1; self._reset_board(); return True
         elif new_board.ball["y"] >= len(self._board)-2: self._p1_score += 1; self._reset_board(); return True
@@ -217,7 +217,7 @@ class PhutballServer(TCPServer):
                     )
                     game_time = time()
 
-            self._results[i]["time"]    = round(self.results[i]["time"] / experiment["nofgames"], 6)
+            self._results[i]["time"]    = round(self._results[i]["time"] / experiment["nofgames"], 6)
             self._results[i]["p1-time"] = round(self._results[i]["p1-time"] / turns, 6)
             self._results[i]["p2-time"] = round(self._results[i]["p2-time"] / (turns if turns % 2 == 0 else turns-1), 6)
 
@@ -245,11 +245,15 @@ def run_server(port, handler):
         try:
             httpd          = PhutballServer(("", port), handler)
             server_running = True
-            print("Serving at http://localhost:{}/src/".format(port))
+            print("Serving at http://localhost:{}".format(port))
             httpd.start()
         except OSError:
             print("{} in use, trying next".format(port))
             port += 1
+        except KeyboardInterrupt:
+            print("\nServer shutting down...")
+            httpd.shutdown()
+            print("Server successfully shutdown")
 
 if __name__ == '__main__':
     handler = PhutballHandler
